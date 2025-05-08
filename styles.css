@@ -1,41 +1,42 @@
 /* General Body and Layout */
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #eef2f7;
+    background-color: #f2f7fc; /* Soft, light background */
     margin: 0;
     padding: 0;
-    color: #2e2e2e;
+    color: #333;
 }
 
 /* Header */
 header {
-    background-color: #4CAF50;
+    background-color: #4CAF50; /* Bright Green */
     color: white;
     padding: 20px;
     font-size: 30px;
     text-align: center;
 }
 
-/* Button Styles - Roblox Rivals Inspired */
+/* Button Styles - Roblox Rivals Inspired with Improved Color Scheme */
 .button {
-    background: linear-gradient(145deg, #ff5f57, #ffac3a);
+    background-color: #4CAF50; /* Solid Green */
     color: white;
     font-size: 20px;
     padding: 15px 30px;
     border-radius: 12px;
     border: none;
     cursor: pointer;
-    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2), -4px -4px 8px rgba(255, 255, 255, 0.2);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2), 0px -4px 8px rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease-in-out;
     margin-top: 20px;
     font-weight: bold;
     text-transform: uppercase;
+    display: inline-block;
 }
 
 .button:hover {
     transform: scale(1.05);
-    background: linear-gradient(145deg, #ffac3a, #ff5f57);
-    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3), -4px -4px 8px rgba(255, 255, 255, 0.3);
+    background-color: #45a049; /* Slightly darker green */
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3), 0px -6px 12px rgba(255, 255, 255, 0.3);
 }
 
 .button:active {
@@ -51,7 +52,7 @@ header {
 #map button {
     padding: 15px 30px;
     margin: 10px;
-    background: linear-gradient(145deg, #ff5f57, #ffac3a);
+    background-color: #2196F3; /* Light Blue */
     border-radius: 12px;
     border: none;
     color: white;
@@ -59,14 +60,14 @@ header {
     font-size: 20px;
     text-transform: uppercase;
     cursor: pointer;
-    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2), -4px -4px 8px rgba(255, 255, 255, 0.2);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2), 0px -4px 8px rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease-in-out;
 }
 
 #map button:hover {
     transform: scale(1.05);
-    background: linear-gradient(145deg, #ffac3a, #ff5f57);
-    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3), -4px -4px 8px rgba(255, 255, 255, 0.3);
+    background-color: #1e88e5; /* Slightly darker blue */
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3), 0px -6px 12px rgba(255, 255, 255, 0.3);
 }
 
 #map button:active {
