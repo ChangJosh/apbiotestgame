@@ -1,63 +1,111 @@
-const questions = [
+let currentChapter = 0;
+const chapters = [
     {
-        question: "What is the function of the mitochondria?",
-        options: ["Protein Synthesis", "Energy Production", "Photosynthesis", "Cell Division"],
-        answer: "Energy Production"
+        story: "Welcome to BioQuest! Help Dr. Cell explore the wonders of the cell to unlock its secrets.",
+        minigame: "exploreCell",
+        title: "Cell Exploration"
     },
     {
-        question: "Which organelle is responsible for protein synthesis?",
-        options: ["Nucleus", "Ribosomes", "Lysosomes", "Golgi Apparatus"],
-        answer: "Ribosomes"
-    },
-    {
-        question: "What is the outer layer of a plant cell called?",
-        options: ["Plasma Membrane", "Nucleus", "Cell Wall", "Mitochondria"],
-        answer: "Cell Wall"
+        story: "Now, let's repair some DNA. Can you fix the damaged sequence?",
+        minigame: "repairDNA",
+        title: "DNA Repair"
     }
 ];
 
-let currentQuestionIndex = 0;
-let score = 0;
-
-function startGame() {
-    document.querySelector('button').style.display = 'none'; // Hide the start button
-    document.getElementById('quizContainer').style.display = 'block'; // Show quiz container
-    loadQuestion();
+function startAdventure() {
+    document.querySelector('button').style.display = 'none'; // Hide start button
+    document.getElementById('storyContainer').style.display = 'block'; // Show story section
+    document.getElementById('storyText').innerText = chapters[currentChapter].story;
 }
 
-function loadQuestion() {
-    const currentQuestion = questions[currentQuestionIndex];
-    document.getElementById('questionContainer').innerText = currentQuestion.question;
-    const optionsContainer = document.getElementById('optionsContainer');
-    optionsContainer.innerHTML = ''; // Clear previous options
+function startExploration() {
+    document.getElementById('storyContainer').style.display = 'none'; // Hide story
+    document.getElementById('exploreContainer').style.display = 'block'; // Show exploration
+    initCellExploration();
+}
 
-    currentQuestion.options.forEach(option => {
-        const button = document.createElement('button');
-        button.innerText = option;
-        button.onclick = () => checkAnswer(option);
-        optionsContainer.appendChild(button);
+function initCellExploration() {
+    // Organelles images and their names
+    const organelles = [
+        { name: 'Nucleus', image: 'https://via.placeholder.com/100' }, // Replace with real images
+        { name: 'Mitochondria', image: 'https://via.placeholder.com/100' },
+        { name: 'Ribosomes', image: 'https://via.placeholder.com/100' },
+        { name: 'Endoplasmic Reticulum', image: 'https://via.placeholder.com/100' }
+    ];
+
+    const canvas = document.getElementById('cellCanvas');
+    canvas.innerHTML = ''; // Clear previous content
+
+    organelles.forEach(organelle => {
+        const organelleDiv = document.createElement('div');
+        organelleDiv.classList.add('organelle');
+        organelleDiv.innerHTML = `<img src="${organelle.image}" alt="${organelle.name}"><br>${organelle.name}`;
+        organelleDiv.onclick = () => startMinigame(organelle.name);
+        canvas.appendChild(organelleDiv);
     });
-
-    document.getElementById('nextButton').style.display = 'none'; // Hide next button initially
 }
 
-function checkAnswer(selectedOption) {
-    const correctAnswer = questions[currentQuestionIndex].answer;
-    if (selectedOption === correctAnswer) {
-        score++;
+function startMinigame(organelle) {
+    alert(`You are now exploring the ${organelle}`);
+    if (organelle === 'Mitochondria') {
+        startDNARepairGame();
     }
-
-    document.getElementById('score').innerText = `Score: ${score}`;
-    document.getElementById('nextButton').style.display = 'block'; // Show next button
 }
 
-function nextQuestion() {
-    currentQuestionIndex++;
+function startDNARepairGame() {
+    document.getElementById('exploreContainer').style.display = 'none'; // Hide exploration
+    document.getElementById('minigameContainer').style.display = 'block'; // Show mini-game
+    document.getElementById('dnaRepairGame').style.display = 'block'; // Show DNA repair
+    initDNARepair();
+}
 
-    if (currentQuestionIndex < questions.length) {
-        loadQuestion();
+function initDNARepair() {
+    const dnaSequence = ['A', 'T', 'G', 'C'];
+    const repairContainer = document.getElementById('dnaRepair');
+    repairContainer.innerHTML = ''; // Clear previous content
+
+    dnaSequence.forEach((nucleotide, index) => {
+        const button = document.createElement('button');
+        button.innerText = nucleotide;
+        button.onclick = () => checkDNARepair(nucleotide, index);
+        repairContainer.appendChild(button);
+    });
+}
+
+function checkDNARepair(selectedNucleotide, index) {
+    const correctSequence = ['A', 'T', 'G', 'C'];
+    const isCorrect = selectedNucleotide === correctSequence[index];
+
+    showFeedback(isCorrect);
+}
+
+function showFeedback(isCorrect) {
+    const feedbackElement = document.getElementById('feedback');
+    if (isCorrect) {
+        feedbackElement.style.backgroundColor = 'green';
+        feedbackElement.innerText = 'Correct!';
     } else {
-        document.getElementById('score').innerText = `Congratulations! Your final score is: ${score}`;
-        document.getElementById('nextButton').style.display = 'none'; // Hide next button
+        feedbackElement.style.backgroundColor = 'red';
+        feedbackElement.innerText = 'Wrong!';
+    }
+    feedbackElement.style.display = 'block';
+    setTimeout(() => {
+        feedbackElement.style.display = 'none';
+    }, 1000); // Hide feedback after 1 second
+}
+
+function completeMinigame() {
+    alert("DNA sequence repaired! Well done.");
+    document.getElementById('minigameContainer').style.display = 'none'; // Hide mini-game
+    nextChapter();
+}
+
+function nextChapter() {
+    currentChapter++;
+    if (currentChapter < chapters.length) {
+        document.getElementById('storyText').innerText = chapters[currentChapter].story;
+        document.getElementById('storyContainer').style.display = 'block'; // Show story
+    } else {
+        alert("Congratulations, you've completed BioQuest!");
     }
 }
