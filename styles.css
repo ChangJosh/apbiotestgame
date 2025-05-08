@@ -1,3 +1,4 @@
+/* General Body and Layout */
 body {
     font-family: 'Arial', sans-serif;
     background-color: #eef2f7;
@@ -6,6 +7,7 @@ body {
     color: #2e2e2e;
 }
 
+/* Header */
 header {
     background-color: #4CAF50;
     color: white;
@@ -14,54 +16,80 @@ header {
     text-align: center;
 }
 
-#gameContainer {
-    margin: 20px;
-}
-
+/* Button Styles - Roblox Rivals Inspired */
 .button {
-    background-color: #4CAF50;
+    background: linear-gradient(145deg, #ff5f57, #ffac3a);
     color: white;
-    padding: 10px 20px;
-    font-size: 18px;
-    cursor: pointer;
+    font-size: 20px;
+    padding: 15px 30px;
+    border-radius: 12px;
     border: none;
+    cursor: pointer;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2), -4px -4px 8px rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease-in-out;
     margin-top: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
 }
 
 .button:hover {
-    background-color: #45a049;
+    transform: scale(1.05);
+    background: linear-gradient(145deg, #ffac3a, #ff5f57);
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3), -4px -4px 8px rgba(255, 255, 255, 0.3);
 }
 
+.button:active {
+    transform: scale(1);
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.2);
+}
+
+/* Button Container */
 .map-container {
     text-align: center;
 }
 
 #map button {
-    padding: 10px 20px;
+    padding: 15px 30px;
     margin: 10px;
-    background-color: #3e8e41;
+    background: linear-gradient(145deg, #ff5f57, #ffac3a);
+    border-radius: 12px;
     border: none;
     color: white;
+    font-weight: bold;
+    font-size: 20px;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2), -4px -4px 8px rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease-in-out;
 }
 
-#battleContainer {
-    text-align: center;
-    background-color: #fff;
-    padding: 20px;
-    border: 2px solid #4CAF50;
-    margin-top: 20px;
+#map button:hover {
+    transform: scale(1.05);
+    background: linear-gradient(145deg, #ffac3a, #ff5f57);
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3), -4px -4px 8px rgba(255, 255, 255, 0.3);
+}
+
+#map button:active {
+    transform: scale(1);
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.2);
 }
 
 .inventory-container {
     background-color: #fff;
     padding: 20px;
     border: 2px solid #2196F3;
+    border-radius: 12px;
 }
 
-#storyContainer {
-    text-align: center;
+.inventory-container p {
+    font-size: 18px;
 }
 
 #storyText {
     font-size: 20px;
+}
+
+/* Specific Story Section */
+#storyContainer {
+    text-align: center;
 }
