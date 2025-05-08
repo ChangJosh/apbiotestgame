@@ -9,18 +9,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 
     <style>
-        /* General Body and Layout */
         body {
             font-family: 'Roboto', sans-serif;
             background: #e5f2f9; /* Soft Light Blue Gradient */
             margin: 0;
             padding: 0;
-            color: #3d3d3d; /* Dark Gray Text */
+            color: #3d3d3d;
         }
 
-        /* Header */
         header {
-            background: #2c3e50; /* Midnight Blue */
+            background: #2c3e50; 
             color: white;
             padding: 40px 20px;
             font-size: 36px;
@@ -30,7 +28,6 @@
             letter-spacing: 1px;
         }
 
-        /* Main Game Container */
         #gameContainer {
             padding: 30px;
             max-width: 900px;
@@ -38,18 +35,15 @@
             text-align: center;
         }
 
-        /* Story and Dialogue Box */
         #storyText {
             font-size: 22px;
             margin-bottom: 30px;
-            color: #3d3d3d; /* Dark Gray Text */
+            color: #3d3d3d;
             line-height: 1.6;
-            font-weight: 400;
         }
 
-        /* Button Styles */
         .button {
-            background: #57c0d7; /* Light Teal */
+            background: #57c0d7; 
             color: white;
             font-size: 20px;
             padding: 15px 40px;
@@ -62,14 +56,13 @@
             text-transform: uppercase;
             font-weight: 500;
             width: 100%;
-            max-width: 300px; /* Uniform button size */
+            max-width: 300px;
             display: inline-block;
         }
 
         .button:hover {
-            background: #45a1b5; /* Darker Teal */
+            background: #45a1b5;
             box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2);
-            transform: translateY(-3px);
         }
 
         .button:active {
@@ -82,23 +75,19 @@
             outline: none;
         }
 
-        /* Adventure Map Section */
         #mapContainer {
             margin-top: 40px;
         }
 
-        /* Battle Section */
         #battleContainer {
             display: none;
         }
 
-        /* Inventory Section */
         #inventoryContainer {
             margin-top: 40px;
             display: none;
         }
 
-        /* Scene Transitions */
         .fade-in {
             animation: fadeIn 1s ease-in forwards;
         }
@@ -106,6 +95,36 @@
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
+        }
+
+        /* Health and Energy Bar */
+        #healthBar {
+            width: 100%;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        #energyBar {
+            width: 100%;
+            height: 20px;
+            background: #f9e555;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .barFill {
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .healthFill {
+            background: #f44336;
+        }
+
+        .energyFill {
+            background: #57c0d7;
         }
     </style>
 </head>
@@ -115,7 +134,6 @@
 
 <!-- Game Container -->
 <div id="gameContainer">
-    <!-- Story and Dialogue -->
     <div id="storyContainer" class="fade-in">
         <p id="storyText">Welcome to BioQuest! As a young scientist, you're about to explore the microscopic world inside a living cell. Ready for your first adventure?</p>
         <div class="button-container">
@@ -130,6 +148,14 @@
             <button class="button" onclick="exploreMitochondria()">Explore the Mitochondria</button>
             <button class="button" onclick="exploreNucleus()">Explore the Nucleus</button>
         </div>
+    </div>
+
+    <!-- Health and Energy Bars -->
+    <div id="healthBar">
+        <div id="healthFill" class="barFill healthFill" style="width: 100%"></div>
+    </div>
+    <div id="energyBar">
+        <div id="energyFill" class="barFill energyFill" style="width: 100%"></div>
     </div>
 
     <!-- Battle Section -->
@@ -150,50 +176,43 @@
 </div>
 
 <script>
-// Variables for story progression, inventory, etc.
-let currentStage = 0;
-let inventory = [];
+// Variables for story progression, health, energy, and battle mechanics
+let health = 100;
+let energy = 100;
 let battleInProgress = false;
+let currentStage = 0;
 
 const storyStages = [
     {
         text: "Welcome to BioQuest! You're about to explore a living cell. There’s so much to discover! Let’s dive in!",
-        nextText: "You enter the cell and find yourself at a crossroad. What will you explore first?",
         choices: [
-            { text: "Explore the Mitochondria", action: exploreMitochondria },
-            { text: "Explore the Nucleus", action: exploreNucleus }
+            { text: "Start Adventure", action: startAdventure }
         ]
     },
     {
-        text: "The Mitochondria is known as the powerhouse of the cell. It's time to charge up the energy!",
-        nextText: "There’s a rogue virus attacking the Mitochondria. Time to defend!",
+        text: "You step into the cell. The Mitochondria glows with energy. But wait—there’s a rogue virus attacking it!",
         choices: [
-            { text: "Fight the Virus!", action: startBattle }
+            { text: "Fight the Virus", action: startBattle }
         ]
     }
 ];
 
-// Start the game and the first storyline
 function startAdventure() {
-    document.getElementById("storyContainer").style.display = "none"; // Hide intro screen
-    document.getElementById("mapContainer").style.display = "block"; // Show map options
+    document.getElementById("storyContainer").style.display = "none";
+    document.getElementById("mapContainer").style.display = "block";
 }
 
-// Explore Mitochondria Location
 function exploreMitochondria() {
-    currentStage = 1; // Advance to next stage
-    displayStory(storyStages[currentStage]); // Display next story stage
-    document.getElementById("mapContainer").style.display = "none"; // Hide map options
-    document.getElementById("battleContainer").style.display = "block"; // Show battle section
+    currentStage = 1;
+    displayStory(storyStages[currentStage]);
+    document.getElementById("mapContainer").style.display = "none";
+    document.getElementById("battleContainer").style.display = "block";
 }
 
-// Explore Nucleus Location
 function exploreNucleus() {
     alert("Exploring the Nucleus: DNA repair and protein synthesis!");
-    startBattle();
 }
 
-// Display Story with Transitions
 function displayStory(stage) {
     const storyTextElement = document.getElementById("storyText");
     storyTextElement.innerText = stage.text;
@@ -211,30 +230,62 @@ function displayStory(stage) {
     document.getElementById("storyContainer").appendChild(buttonContainer);
 }
 
-// Battle Mechanics (basic)
 function startBattle() {
     battleInProgress = true;
     document.getElementById("battleMessage").innerText = "A rogue virus appears! It’s attacking the mitochondria! Prepare to defend the cell!";
-    document.getElementById("battleContainer").style.display = "block";
 }
 
 function performAction(action) {
     if (action === "Attack") {
-        alert("You unleash powerful enzymes to attack the virus!");
-        endBattle("The virus is defeated!");
+        if (energy >= 30) {
+            energy -= 30;
+            updateEnergyBar();
+            alert("You unleash powerful enzymes to attack the virus!");
+            endBattle("The virus is defeated!");
+        } else {
+            alert("Not enough energy!");
+        }
     } else if (action === "Defend") {
-        alert("You defend with the cell membrane, blocking the virus's attack!");
-        endBattle("The virus retreats!");
+        if (energy >= 20) {
+            energy -= 20;
+            updateEnergyBar();
+            alert("You defend with the cell membrane, blocking the virus's attack!");
+            endBattle("The virus retreats!");
+        } else {
+            alert("Not enough energy!");
+        }
     } else if (action === "Heal") {
-        alert("You repair the damaged DNA to restore the mitochondria!");
-        endBattle("The mitochondria are back in action!");
+        if (energy >= 40) {
+            energy -= 40;
+            health += 10;
+            updateEnergyBar();
+            updateHealthBar();
+            alert("You repair the damaged DNA to restore the mitochondria!");
+            endBattle("The mitochondria are back in action!");
+        } else {
+            alert("Not enough energy!");
+        }
+    }
+}
+
+function updateHealthBar() {
+    document.getElementById("healthFill").style.width = `${health}%`;
+    if (health <= 0) {
+        alert("You have lost the battle! Try again.");
+    }
+}
+
+function updateEnergyBar() {
+    document.getElementById("energyFill").style.width = `${energy}%`;
+    if (energy <= 0) {
+        alert("You have run out of energy! Game over.");
     }
 }
 
 function endBattle(message) {
     alert(message);
-    document.getElementById("battleContainer").style.display = "none"; // Hide battle screen
-    document.getElementById("mapContainer").style.display = "block"; // Return to map options
+    document.getElementById("battleContainer").style.display = "none";
+    document.getElementById("mapContainer").style.display = "block";
 }
 </script>
 
