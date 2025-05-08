@@ -61,7 +61,9 @@
             margin: 15px 0;
             text-transform: uppercase;
             font-weight: 500;
-            width: 250px;
+            width: 100%;
+            max-width: 300px; /* Ensure buttons aren't too large */
+            display: inline-block;
         }
 
         .button:hover {
@@ -126,6 +128,16 @@
                 width: 80%;
             }
         }
+
+        /* Scene Transitions */
+        .fade-in {
+            animation: fadeIn 1s ease-in forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -135,7 +147,7 @@
 <!-- Game Container -->
 <div id="gameContainer">
     <!-- Story and Dialogue -->
-    <div id="storyContainer">
+    <div id="storyContainer" class="fade-in">
         <p id="storyText">Welcome to BioQuest! You are a young scientist tasked with exploring the biological world. Ready for an adventure?</p>
         <div class="button-container">
             <button class="button" onclick="startAdventure()">Start Adventure</button>
@@ -143,7 +155,7 @@
     </div>
 
     <!-- Adventure Map -->
-    <div id="mapContainer" class="map-container" style="display:none;">
+    <div id="mapContainer" class="fade-in" style="display:none;">
         <p id="mapText">You enter the biological world. Where would you like to go?</p>
         <div class="button-container">
             <button class="button" onclick="exploreCell()">Enter the Cell</button>
@@ -152,13 +164,17 @@
     </div>
 
     <!-- Battle Section -->
-    <div id="battleContainer" class="battle-container" style="display:none;">
+    <div id="battleContainer" class="fade-in" style="display:none;">
         <p id="battleMessage">You encounter a cell creature! Prepare for battle!</p>
-        <button class="button" onclick="startBattle()">Start Battle</button>
+        <div class="button-container">
+            <button class="button" onclick="performAction('Attack')">Attack</button>
+            <button class="button" onclick="performAction('Defend')">Defend</button>
+            <button class="button" onclick="performAction('Heal')">Heal</button>
+        </div>
     </div>
 
     <!-- Inventory Section -->
-    <div id="inventoryContainer" class="inventory-container" style="display:none;">
+    <div id="inventoryContainer" style="display:none;">
         <p>Your Inventory:</p>
         <ul id="inventoryList"></ul>
     </div>
@@ -208,13 +224,48 @@ function exploreDNA() {
     startBattle();
 }
 
-// Start Battle/Puzzle Logic
+// Display Story with Transitions
+function displayStory(stage) {
+    const storyTextElement = document.getElementById("storyText");
+    storyTextElement.innerText = stage.text;
+    const buttonContainer = document.createElement('div');
+    buttonContainer.classList.add("button-container");
+
+    stage.choices.forEach(choice => {
+        const button = document.createElement('button');
+        button.innerText = choice.text;
+        button.classList.add("button");
+        button.onclick = choice.action;
+        buttonContainer.appendChild(button);
+    });
+
+    document.getElementById("storyContainer").appendChild(buttonContainer);
+}
+
+// Battle Mechanics (basic)
 function startBattle() {
-    if (!battleInProgress) {
-        battleInProgress = true;
-        alert("A battle with a cell creature begins!");
-        // You can simulate battles here with a choice of biology-based actions
+    battleInProgress = true;
+    document.getElementById("battleMessage").innerText = "A cell creature appears! What will you do?";
+    document.getElementById("battleContainer").style.display = "block";
+}
+
+function performAction(action) {
+    if (action === "Attack") {
+        alert("You attack the creature!");
+        endBattle("You defeated the creature!");
+    } else if (action === "Defend") {
+        alert("You defend against the creature's attack!");
+        endBattle("The creature retreated!");
+    } else if (action === "Heal") {
+        alert("You heal yourself!");
+        endBattle("You recovered some health!");
     }
+}
+
+function endBattle(message) {
+    alert(message);
+    document.getElementById("battleContainer").style.display = "none"; // Hide battle screen
+    document.getElementById("mapContainer").style.display = "block"; // Return to map options
 }
 </script>
 
