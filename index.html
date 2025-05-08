@@ -263,8 +263,7 @@
         document.getElementById("energyFill").style.width = `${energy}%`;
         document.getElementById("energyText").innerText = `${energy}/100`;
         if (energy <= 0) {
-            alert("You have run out of energy! Game over.");
-            resetGame();
+            performMonsterAttack();
         }
     }
 
@@ -329,19 +328,17 @@
         updateEnergyBar();
         updateVirusHealthBar();
 
-        setTimeout(monsterTurn, 1500);
+        setTimeout(performMonsterAttack, 1500);
     }
 
-    function monsterTurn() {
-        const damage = Math.floor(Math.random() * 20) + 10;
-        health -= damage;
-        updateHealthBar();
-
-        if (health > 0) {
-            askQuestion();
-        } else {
-            alert("You have been defeated! Game over.");
-            resetGame();
+    function performMonsterAttack() {
+        if (energy > 0) {
+            // Monster attacks after player runs out of energy
+            const damage = Math.floor(Math.random() * 20) + 10;
+            health -= damage;
+            alert(`The monster attacked you for ${damage} damage!`);
+            updateHealthBar();
+            setTimeout(askQuestion, 2000);
         }
     }
 
