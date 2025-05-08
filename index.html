@@ -162,7 +162,7 @@ const storyStages = [
 // Start the game and the first storyline
 function startAdventure() {
     document.getElementById("storyContainer").style.display = "none"; // Hide intro screen
-    displayStory(storyStages[currentStage]); // Display first story stage
+    document.getElementById("mapContainer").style.display = "block"; // Show map options
 }
 
 // Display story with choices
