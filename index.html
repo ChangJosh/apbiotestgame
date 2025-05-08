@@ -5,20 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BioQuest: Cell Explorer</title>
 
-    <!-- Google Fonts for Better Typography -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            background: #e5f2f9; /* Soft Light Blue Gradient */
+            background: #e5f2f9;
             margin: 0;
             padding: 0;
             color: #3d3d3d;
         }
 
         header {
-            background: #2c3e50; 
+            background: #2c3e50;
             color: white;
             padding: 40px 20px;
             font-size: 36px;
@@ -43,7 +42,7 @@
         }
 
         .button {
-            background: #57c0d7; 
+            background: #57c0d7;
             color: white;
             font-size: 20px;
             padding: 15px 40px;
@@ -101,7 +100,6 @@
             to { opacity: 1; }
         }
 
-        /* Health and Energy Bar */
         #healthBar {
             width: 100%;
             height: 20px;
@@ -130,6 +128,31 @@
         .energyFill {
             background: #57c0d7;
         }
+
+        .result {
+            padding: 20px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: none;
+        }
+
+        .correct {
+            background-color: #4caf50; 
+            color: white;
+            font-size: 24px;
+        }
+
+        .incorrect {
+            background-color: #f44336; 
+            color: white;
+            font-size: 24px;
+        }
+
+        .resultText {
+            margin: 10px;
+            font-size: 18px;
+        }
+
     </style>
 </head>
 <body>
@@ -166,9 +189,11 @@
     <div id="questionContainer" class="fade-in" style="display:none;">
         <p id="questionText">Question will appear here.</p>
         <div class="button-container">
-            <button class="button" onclick="answerQuestion(true)">True</button>
-            <button class="button" onclick="answerQuestion(false)">False</button>
+            <button class="button" onclick="answerQuestion(0)">Option 1</button>
+            <button class="button" onclick="answerQuestion(1)">Option 2</button>
+            <button class="button" onclick="answerQuestion(2)">Option 3</button>
         </div>
+        <div id="resultMessage" class="result"></div>
     </div>
 
     <!-- Battle Section -->
@@ -195,6 +220,7 @@ let energy = 0;
 let battleInProgress = false;
 let currentStage = 0;
 let currentQuestion = 0;
+let virusHealth = 100;
 
 const storyStages = [
     {
@@ -212,9 +238,9 @@ const storyStages = [
 ];
 
 const questions = [
-    { question: "Is the mitochondria responsible for energy production?", answer: true },
-    { question: "Do plant cells have mitochondria?", answer: false },
-    { question: "Is DNA stored in the nucleus?", answer: true },
+    { question: "Is the mitochondria responsible for energy production?", options: ["Yes", "No", "Not sure"], correct: 0 },
+    { question: "Do plant cells have mitochondria?", options: ["Yes", "No", "Not sure"], correct: 1 },
+    { question: "Is DNA stored in the nucleus?", options: ["Yes", "No", "Not sure"], correct: 0 },
 ];
 
 function startAdventure() {
@@ -228,10 +254,6 @@ function exploreMitochondria() {
     document.getElementById("mapContainer").style.display = "none";
     document.getElementById("questionContainer").style.display = "block";
     loadNextQuestion();
-}
-
-function exploreNucleus() {
-    alert("Exploring the Nucleus: DNA repair and protein synthesis!");
 }
 
 function displayStory(stage) {
@@ -255,6 +277,9 @@ function loadNextQuestion() {
     if (currentQuestion < questions.length) {
         const question = questions[currentQuestion];
         document.getElementById("questionText").innerText = question.question;
+        document.querySelectorAll(".button")[0].innerText = question.options[0];
+        document.querySelectorAll(".button")[1].innerText = question.options[1];
+        document.querySelectorAll(".button")[2].innerText = question.options[2];
     } else {
         alert("You're ready to battle!");
         document.getElementById("questionContainer").style.display = "none";
@@ -262,17 +287,26 @@ function loadNextQuestion() {
     }
 }
 
-function answerQuestion(isCorrect) {
+function answerQuestion(optionIndex) {
     const current = questions[currentQuestion];
-    if (current.answer === isCorrect) {
+    const resultMessage = document.getElementById("resultMessage");
+
+    if (current.correct === optionIndex) {
         energy += 20;
         updateEnergyBar();
-        alert("Correct! You gained 20 energy.");
+        resultMessage.classList.add("correct");
+        resultMessage.innerHTML = "Correct! You earned 20 energy.";
     } else {
-        alert("Wrong! Try again.");
+        resultMessage.classList.add("incorrect");
+        resultMessage.innerHTML = "Incorrect! Try again.";
     }
+    resultMessage.style.display = "block";
     currentQuestion++;
-    loadNextQuestion();
+
+    setTimeout(() => {
+        resultMessage.style.display = "none";
+        loadNextQuestion();
+    }, 1500);
 }
 
 function startBattle() {
@@ -284,20 +318,23 @@ function performAction(action) {
     if (action === "Attack" && energy >= 30) {
         energy -= 30;
         updateEnergyBar();
-        alert("You unleash enzymes to attack the virus!");
-        endBattle("The virus is defeated!");
+        virusHealth -= 25;
+        if (virusHealth <= 0) {
+            alert("The virus is defeated!");
+            endBattle();
+        } else {
+            alert("You attacked the virus!");
+        }
     } else if (action === "Defend" && energy >= 20) {
         energy -= 20;
         updateEnergyBar();
         alert("You defend with the cell membrane!");
-        endBattle("The virus retreats!");
     } else if (action === "Heal" && energy >= 40) {
         energy -= 40;
         health += 10;
         updateEnergyBar();
         updateHealthBar();
         alert("You repair the DNA and restore the mitochondria!");
-        endBattle("The mitochondria are fully restored!");
     } else {
         alert("Not enough energy!");
     }
@@ -317,8 +354,7 @@ function updateEnergyBar() {
     }
 }
 
-function endBattle(message) {
-    alert(message);
+function endBattle() {
     document.getElementById("battleContainer").style.display = "none";
     document.getElementById("mapContainer").style.display = "block";
 }
