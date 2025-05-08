@@ -4,26 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BioDungeon Escape</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            background: #1b1b1b;
+            background: #101010;
+            color: #f5f5f5;
             margin: 0;
             padding: 0;
-            color: #fff;
         }
 
         header {
-            background: #222;
-            color: #f1f1f1;
+            background: #3A3A3A;
+            color: #F1F1F1;
             padding: 30px 20px;
-            font-size: 30px;
+            font-size: 32px;
             font-family: 'Montserrat', sans-serif;
             text-align: center;
-            letter-spacing: 1px;
         }
 
         .screen {
@@ -43,10 +43,10 @@
         }
 
         #storyText {
-            font-size: 18px;
+            font-size: 20px;
             margin-bottom: 20px;
-            color: #e5e5e5;
             line-height: 1.6;
+            color: #e5e5e5;
         }
 
         .button {
@@ -82,12 +82,14 @@
             outline: none;
         }
 
+        /* Health and Energy Bars (Roblox Rivals style) */
         .barContainer {
             width: 100%;
             height: 20px;
-            background: #e0e0e0;
+            background: #3A3A3A;
             border-radius: 10px;
             margin: 20px 0;
+            box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6);
         }
 
         .barFill {
@@ -96,57 +98,73 @@
         }
 
         .healthFill {
-            background: #f44336;
+            background: #FF6F61;
         }
 
         .energyFill {
             background: #57c0d7;
         }
 
-        .virusHealthFill {
-            background: #ffcc00;
-        }
-
         .barText {
             display: flex;
             justify-content: space-between;
-            font-size: 16px;
+            font-size: 18px;
             margin-top: 5px;
         }
 
+        /* Answer Question Screen (Prodigy-style) */
+        #questionScreen input {
+            font-size: 20px;
+            padding: 10px;
+            width: 80%;
+            max-width: 400px;
+            margin: 20px 0;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            background: #222;
+            color: white;
+        }
+
+        #questionScreen input:focus {
+            outline: none;
+            background: #333;
+        }
+
+        #questionScreen button {
+            margin-top: 20px;
+        }
+
+        /* Result messages for correct/incorrect answers */
         .result {
             padding: 20px;
             border-radius: 8px;
             margin: 10px 0;
+            font-size: 22px;
             display: none;
         }
 
         .correct {
             background-color: #4caf50;
             color: white;
-            font-size: 24px;
         }
 
         .incorrect {
             background-color: #f44336;
             color: white;
-            font-size: 24px;
         }
 
-        .resultText {
-            margin: 10px;
-            font-size: 18px;
+        /* Virus health info */
+        #virusHealthBar {
+            width: 100%;
+            height: 30px;
+            margin: 20px 0;
         }
 
-        .disabled {
-            background-color: gray !important;
-            cursor: not-allowed !important;
-        }
-
-        #keyMessage {
-            font-size: 22px;
-            color: #ffdd57;
-            margin-top: 20px;
+        .virusHealthFill {
+            height: 100%;
+            background: #ffcc00;
+            border-radius: 10px;
         }
     </style>
 </head>
@@ -154,16 +172,15 @@
 
 <header>BioDungeon Escape</header>
 
-<!-- Game Container -->
 <div id="gameContainer">
 
     <!-- Story Screen -->
     <div id="storyScreen" class="screen">
-        <p id="storyText">You awaken in a dark dungeon. You must escape by defeating monsters and solving biology-related questions. Will you make it out alive?</p>
+        <p id="storyText">You awaken in a dark dungeon. To escape, you must solve biology-related puzzles and battle fierce monsters! Get ready for the challenge!</p>
         <button class="button" onclick="startGame()">Start Adventure</button>
     </div>
 
-    <!-- Question Answering Screen -->
+    <!-- Question Screen (Prodigy-style) -->
     <div id="questionScreen" class="screen">
         <p id="questionText">What is the powerhouse of the cell?</p>
         <input type="text" id="answerInput" placeholder="Your answer">
@@ -175,14 +192,7 @@
     <div id="actionScreen" class="screen">
         <p id="battleMessage">A wild monster blocks your path!</p>
 
-        <!-- Health and Energy Bars -->
-        <div id="virusHealthBar" class="barContainer">
-            <div id="virusHealthFill" class="barFill virusHealthFill" style="width: 100%"></div>
-        </div>
-        <div class="barText">
-            <span>Monster Health: <span id="virusHealthText">100/100</span></span>
-        </div>
-
+        <!-- Health & Energy Bars -->
         <div id="healthBar" class="barContainer">
             <div id="healthFill" class="barFill healthFill" style="width: 100%"></div>
         </div>
@@ -197,7 +207,13 @@
             <span>Your Energy: <span id="energyText">0/100</span></span>
         </div>
 
-        <div id="keyMessage"></div>
+        <!-- Virus Health -->
+        <div id="virusHealthBar" class="barContainer">
+            <div id="virusHealthFill" class="barFill virusHealthFill" style="width: 100%"></div>
+        </div>
+        <div class="barText">
+            <span>Monster Health: <span id="virusHealthText">100/100</span></span>
+        </div>
 
         <div id="actionButtons">
             <button class="button" id="attackButton" onclick="performAction('Attack')">Attack with Enzyme</button>
@@ -211,8 +227,6 @@
     let health = 100;
     let energy = 0;
     let monsterHealth = 100;
-    let keys = 0;
-    let dungeonLevel = 1;
     let questionsAnswered = 0;
 
     const actionCosts = {
@@ -229,13 +243,10 @@
     ];
 
     function showScreen(screenId) {
-        // Hide all screens
         const screens = document.querySelectorAll('.screen');
         screens.forEach(screen => {
             screen.style.display = 'none';
         });
-
-        // Show the desired screen
         document.getElementById(screenId).style.display = 'flex';
     }
 
@@ -262,9 +273,6 @@
         document.getElementById("virusHealthText").innerText = `${monsterHealth}/100`;
         if (monsterHealth <= 0) {
             alert("You defeated the monster!");
-            keys += 1;
-            document.getElementById("keyMessage").innerText = `You gained a key! Total keys: ${keys}`;
-            dungeonLevel += 1;
             startNewRoom();
         }
     }
@@ -289,11 +297,12 @@
 
         updateEnergyBar();
         questionsAnswered += 1;
+
         if (questionsAnswered >= 3) {
             showScreen('actionScreen');
             questionsAnswered = 0;
         } else {
-            askQuestion();  // Ask another question
+            askQuestion();
         }
     }
 
@@ -320,8 +329,7 @@
         updateEnergyBar();
         updateVirusHealthBar();
 
-        // Disable player input and start monster's turn
-        setTimeout(monsterTurn, 1500);  // Wait before the virus attacks back
+        setTimeout(monsterTurn, 1500);
     }
 
     function monsterTurn() {
@@ -330,7 +338,7 @@
         updateHealthBar();
 
         if (health > 0) {
-            askQuestion();  // Ask a question before the next action
+            askQuestion();
         } else {
             alert("You have been defeated! Game over.");
             resetGame();
@@ -339,7 +347,7 @@
 
     function startNewRoom() {
         monsterHealth = 100;
-        document.getElementById("battleMessage").innerText = `A wild monster blocks your path in room ${dungeonLevel}!`;
+        document.getElementById("battleMessage").innerText = "A new monster appears in the next room!";
         updateVirusHealthBar();
         showScreen('questionScreen');
     }
@@ -353,15 +361,14 @@
         health = 100;
         energy = 0;
         monsterHealth = 100;
-        dungeonLevel = 1;
-        keys = 0;
+        questionsAnswered = 0;
         updateHealthBar();
         updateEnergyBar();
         updateVirusHealthBar();
         showScreen('storyScreen');
     }
 
-    // Start with the story screen
+    // Start the game
     showScreen('storyScreen');
 </script>
 
