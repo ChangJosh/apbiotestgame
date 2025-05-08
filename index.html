@@ -166,6 +166,23 @@
             background: #ffcc00;
             border-radius: 10px;
         }
+
+        /* Flash animation for results */
+        .flash {
+            animation: flashAnimation 1s ease-in-out;
+        }
+
+        @keyframes flashAnimation {
+            0% {
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -287,12 +304,18 @@
         const resultDiv = document.getElementById("questionResult");
 
         if (answerInput === correctAnswer) {
-            energy += 20;
+            energy = Math.min(energy + 20, 100); // Don't let energy go above 100
             resultDiv.innerHTML = "<span style='color: green;'>Correct answer! You gained 20 energy.</span>";
+            resultDiv.classList.add("correct", "flash");
         } else {
-            energy -= 10;
-            resultDiv.innerHTML = "<span style='color: red;'>Incorrect answer! You lost 10 energy.</span>";
+            resultDiv.innerHTML = "<span style='color: red;'>Incorrect answer! You didn’t gain any energy.</span>";
+            resultDiv.classList.add("incorrect", "flash");
         }
+
+        setTimeout(() => {
+            resultDiv.classList.remove("flash");  // Remove flash animation
+            document.getElementById("answerInput").value = "";  // Clear the input field
+        }, 2000);
 
         updateEnergyBar();
         questionsAnswered += 1;
