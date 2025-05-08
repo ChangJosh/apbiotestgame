@@ -4,78 +4,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BioQuest: Cell Explorer</title>
+
+    <!-- Google Fonts for Better Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
     <style>
         /* General Body and Layout */
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(to bottom, #1b1b1b, #2a2a2a); /* Dark gradient background */
+            font-family: 'Roboto', sans-serif;
+            background: #e6f2f7; /* Light blue gradient background */
             margin: 0;
             padding: 0;
-            color: white;
+            color: #333; /* Dark text for contrast */
         }
 
         /* Header */
         header {
-            background: linear-gradient(to right, #ff7e5f, #feb47b); /* Vibrant gradient */
+            background: #3a8d99; /* Dark teal */
             color: white;
-            padding: 30px;
-            font-size: 35px;
+            padding: 40px 20px;
+            font-size: 36px;
             text-align: center;
-            border-bottom: 2px solid #ffffff;
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            border-bottom: 3px solid #fff;
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 1px;
         }
 
         /* Main Game Container */
         #gameContainer {
-            padding: 20px;
-            max-width: 800px;
+            padding: 30px;
+            max-width: 900px;
             margin: 0 auto;
             text-align: center;
         }
 
-        /* Button Styles - Inspired by Roblox Rivals */
-        .button {
-            background: linear-gradient(to right, #4CAF50, #45a049); /* Smooth gradient green */
-            color: white;
+        /* Story and Dialogue Box */
+        #storyText {
             font-size: 22px;
-            padding: 18px 35px;
-            border-radius: 12px;
+            margin-bottom: 30px;
+            color: #333;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        /* Button Styles */
+        .button {
+            background: #5ac8e0; /* Soft teal */
+            color: white;
+            font-size: 20px;
+            padding: 15px 40px;
+            border-radius: 8px;
             border: none;
             cursor: pointer;
-            box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.2);
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
             transition: all 0.3s ease-in-out;
-            margin: 10px;
+            margin: 15px 0;
             text-transform: uppercase;
-            font-weight: bold;
-            width: 220px;
-            margin-top: 20px;
+            font-weight: 500;
+            width: 250px;
         }
 
         .button:hover {
-            transform: scale(1.05);
-            background: linear-gradient(to right, #45a049, #4CAF50); /* Inverted gradient for hover */
-            box-shadow: 0px 10px 16px rgba(0, 0, 0, 0.4);
+            background: #4a98a1; /* Slightly darker teal */
+            box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(-3px);
         }
 
         .button:active {
-            transform: scale(0.98);
-            box-shadow: inset 0px 4px 8px rgba(0, 0, 0, 0.3);
+            background: #4a98a1;
+            box-shadow: inset 0px 4px 8px rgba(0, 0, 0, 0.2);
+            transform: translateY(2px);
         }
 
         .button:focus {
             outline: none;
         }
 
-        /* Story and Dialogue Box */
-        #storyText {
-            font-size: 24px;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
-        }
-
         /* Adventure Map Section */
         #mapContainer {
-            margin-top: 30px;
+            margin-top: 40px;
         }
 
         /* Battle Section */
@@ -85,19 +92,39 @@
 
         /* Inventory Section */
         #inventoryContainer {
-            margin-top: 30px;
+            margin-top: 40px;
             display: none;
         }
 
         /* Animated background effect for visual interest */
         @keyframes backgroundAnimation {
-            0% { background-color: #ff7e5f; }
-            50% { background-color: #feb47b; }
-            100% { background-color: #ff7e5f; }
+            0% { background-color: #3a8d99; }
+            50% { background-color: #5ac8e0; }
+            100% { background-color: #3a8d99; }
         }
 
         #storyContainer {
-            animation: backgroundAnimation 2s infinite alternate; /* Background color change */
+            animation: backgroundAnimation 3s infinite alternate; /* Background color change */
+        }
+
+        /* Proper layout of choices and text */
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Center all text containers */
+        #gameContainer {
+            text-align: center;
+            justify-content: center;
+        }
+
+        /* Minor responsiveness for smaller screens */
+        @media (max-width: 768px) {
+            .button {
+                width: 80%;
+            }
         }
     </style>
 </head>
@@ -109,26 +136,28 @@
 <div id="gameContainer">
     <!-- Story and Dialogue -->
     <div id="storyContainer">
-        <p id="storyText">Welcome to BioQuest! You are a young scientist tasked with exploring the biological world!</p>
-        <button class="button" onclick="startAdventure()">Start Adventure</button>
+        <p id="storyText">Welcome to BioQuest! You are a young scientist tasked with exploring the biological world. Ready for an adventure?</p>
+        <div class="button-container">
+            <button class="button" onclick="startAdventure()">Start Adventure</button>
+        </div>
     </div>
 
     <!-- Adventure Map -->
     <div id="mapContainer" class="map-container" style="display:none;">
-        <p>Explore the cell and solve challenges!</p>
-        <div id="map">
+        <p id="mapText">You enter the biological world. Where would you like to go?</p>
+        <div class="button-container">
             <button class="button" onclick="exploreCell()">Enter the Cell</button>
             <button class="button" onclick="exploreDNA()">Explore the DNA Strand</button>
         </div>
     </div>
 
-    <!-- Battle and Mini-games -->
+    <!-- Battle Section -->
     <div id="battleContainer" class="battle-container" style="display:none;">
-        <p id="battleMessage"></p>
+        <p id="battleMessage">You encounter a cell creature! Prepare for battle!</p>
         <button class="button" onclick="startBattle()">Start Battle</button>
     </div>
 
-    <!-- Inventory -->
+    <!-- Inventory Section -->
     <div id="inventoryContainer" class="inventory-container" style="display:none;">
         <p>Your Inventory:</p>
         <ul id="inventoryList"></ul>
@@ -163,25 +192,6 @@ const storyStages = [
 function startAdventure() {
     document.getElementById("storyContainer").style.display = "none"; // Hide intro screen
     document.getElementById("mapContainer").style.display = "block"; // Show map options
-}
-
-// Display story with choices
-function displayStory(stage) {
-    document.getElementById("storyText").innerText = stage.text;
-    const buttonContainer = document.createElement('div');
-    buttonContainer.id = "choiceButtons"; // To replace old buttons
-    buttonContainer.innerHTML = ''; // Clear any existing buttons
-
-    stage.choices.forEach(choice => {
-        const button = document.createElement('button');
-        button.innerText = choice.text;
-        button.classList.add("button"); // Add button class to apply styling
-        button.onclick = choice.action; // Link button to action
-        buttonContainer.appendChild(button);
-    });
-
-    // Append button choices to the story container
-    document.getElementById("storyContainer").appendChild(buttonContainer);
 }
 
 // Explore Cell Location
