@@ -4,77 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BioQuest: Journey Through the Cell</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f8ff;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-        }
-
-        header {
-            background-color: #2e8b57;
-            color: white;
-            padding: 20px;
-            font-size: 30px;
-        }
-
-        .container {
-            margin: 20px;
-        }
-
-        .button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-
-        .button:hover {
-            background-color: #45a049;
-        }
-
-        .quiz-container {
-            display: none;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-        }
-
-        .quiz-question {
-            font-size: 20px;
-        }
-
-        .quiz-options {
-            margin-top: 20px;
-        }
-
-        .quiz-options button {
-            padding: 10px;
-            font-size: 18px;
-            background-color: #2196F3;
-            color: white;
-            border: none;
-            cursor: pointer;
-            margin: 5px;
-            width: 200px;
-        }
-
-        .quiz-options button:hover {
-            background-color: #0b7dda;
-        }
-
-        .result {
-            font-size: 20px;
-            margin-top: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -91,71 +21,7 @@
     <div id="score" class="result"></div>
 </div>
 
-<script>
-    const questions = [
-        {
-            question: "What is the function of the mitochondria?",
-            options: ["Protein Synthesis", "Energy Production", "Photosynthesis", "Cell Division"],
-            answer: "Energy Production"
-        },
-        {
-            question: "Which organelle is responsible for protein synthesis?",
-            options: ["Nucleus", "Ribosomes", "Lysosomes", "Golgi Apparatus"],
-            answer: "Ribosomes"
-        },
-        {
-            question: "What is the outer layer of a plant cell called?",
-            options: ["Plasma Membrane", "Nucleus", "Cell Wall", "Mitochondria"],
-            answer: "Cell Wall"
-        }
-    ];
-
-    let currentQuestionIndex = 0;
-    let score = 0;
-
-    function startGame() {
-        document.querySelector('button').style.display = 'none'; // Hide the start button
-        document.getElementById('quizContainer').style.display = 'block'; // Show quiz container
-        loadQuestion();
-    }
-
-    function loadQuestion() {
-        const currentQuestion = questions[currentQuestionIndex];
-        document.getElementById('questionContainer').innerText = currentQuestion.question;
-        const optionsContainer = document.getElementById('optionsContainer');
-        optionsContainer.innerHTML = ''; // Clear previous options
-
-        currentQuestion.options.forEach(option => {
-            const button = document.createElement('button');
-            button.innerText = option;
-            button.onclick = () => checkAnswer(option);
-            optionsContainer.appendChild(button);
-        });
-
-        document.getElementById('nextButton').style.display = 'none'; // Hide next button initially
-    }
-
-    function checkAnswer(selectedOption) {
-        const correctAnswer = questions[currentQuestionIndex].answer;
-        if (selectedOption === correctAnswer) {
-            score++;
-        }
-
-        document.getElementById('score').innerText = `Score: ${score}`;
-        document.getElementById('nextButton').style.display = 'block'; // Show next button
-    }
-
-    function nextQuestion() {
-        currentQuestionIndex++;
-
-        if (currentQuestionIndex < questions.length) {
-            loadQuestion();
-        } else {
-            document.getElementById('score').innerText = `Congratulations! Your final score is: ${score}`;
-            document.getElementById('nextButton').style.display = 'none'; // Hide next button
-        }
-    }
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
