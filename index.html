@@ -172,10 +172,10 @@
         </div>
 
         <div id="energyBar" class="barContainer">
-            <div id="energyFill" class="barFill energyFill" style="width: 100%"></div>
+            <div id="energyFill" class="barFill energyFill" style="width: 0%"></div>
         </div>
         <div class="barText">
-            <span>Your Energy: <span id="energyText">100/100</span></span>
+            <span>Your Energy: <span id="energyText">0/100</span></span>
         </div>
 
         <div id="keyMessage"></div>
@@ -196,12 +196,12 @@
 
 <script>
     let health = 100;
-    let energy = 100;
+    let energy = 0;
     let monsterHealth = 100;
     let keys = 0;
     let dungeonLevel = 1;
+    let questionsAnswered = 0;
 
-    let playerTurn = false;  // Player cannot act until after answering the question
     const actionCosts = {
         Attack: 30,
         Defend: 20,
@@ -251,9 +251,9 @@
         const healButton = document.getElementById("healButton");
 
         // Disable buttons if not enough energy
-        attackButton.disabled = energy < actionCosts.Attack || !playerTurn;
-        defendButton.disabled = energy < actionCosts.Defend || !playerTurn;
-        healButton.disabled = energy < actionCosts.Heal || !playerTurn;
+        attackButton.disabled = energy < actionCosts.Attack;
+        defendButton.disabled = energy < actionCosts.Defend;
+        healButton.disabled = energy < actionCosts.Heal;
     }
 
     function askQuestion() {
@@ -269,6 +269,7 @@
 
         if (answerInput === correctAnswer) {
             energy += 20;
+            questionsAnswered += 1;
             alert("Correct answer! You gained 20 energy.");
         } else {
             energy -= 10;
@@ -277,27 +278,33 @@
 
         updateEnergyBar();
         document.getElementById("questionContainer").style.display = "none";
-        document.getElementById("actionButtons").style.display = "block";  // Show action buttons after answering
-        playerTurn = true;  // Enable player's turn after answering
-        updateButtons();
+        
+        if (questionsAnswered >= 3) {
+            // Show action buttons after answering 3 questions
+            document.getElementById("actionButtons").style.display = "block";
+            questionsAnswered = 0;  // Reset the question count
+        } else {
+            askQuestion();  // Ask another question
+        }
     }
 
     function performAction(action) {
-        if (!playerTurn) return;  // If it's not the player's turn, do nothing
+        if (energy < actionCosts[action]) {
+            alert("Not enough energy to perform this action!");
+            return;
+        }
 
-        if (action === "Attack" && energy >= actionCosts.Attack) {
+        if (action === "Attack") {
             energy -= actionCosts.Attack;
             monsterHealth -= 30;
             alert("You dealt damage to the monster!");
-        } else if (action === "Defend" && energy >= actionCosts.Defend) {
+        } else if (action === "Defend") {
             energy -= actionCosts.Defend;
             alert("You defended against the monster's attack!");
-        } else if (action === "Heal" && energy >= actionCosts.Heal) {
+        } else if (action === "Heal") {
             energy -= actionCosts.Heal;
             health += 10;
             alert("You repaired your DNA and restored health!");
-        } else {
-            alert("Not enough energy to perform this action!");
         }
 
         updateHealthBar();
@@ -305,7 +312,6 @@
         updateVirusHealthBar();
 
         // Disable player input and start monster's turn
-        playerTurn = false;
         setTimeout(monsterTurn, 1500);  // Wait before the virus attacks back
     }
 
@@ -315,9 +321,10 @@
         updateHealthBar();
 
         if (health > 0) {
-            playerTurn = true;  // Enable player's turn again after virus attacks
-            updateButtons();
             askQuestion();  // Ask a question before the next action
+        } else {
+            alert("You have been defeated! Game over.");
+            resetGame();
         }
     }
 
@@ -325,6 +332,18 @@
         monsterHealth = 100;
         document.getElementById("battleMessage").innerText = `A wild monster blocks your path in room ${dungeonLevel}!`;
         updateVirusHealthBar();
+    }
+
+    function resetGame() {
+        health = 100;
+        energy = 0;
+        monsterHealth = 100;
+        dungeonLevel = 1;
+        keys = 0;
+        updateHealthBar();
+        updateEnergyBar();
+        updateVirusHealthBar();
+        startNewRoom();
     }
 
     // Initialize the game
