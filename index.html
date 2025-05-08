@@ -14,16 +14,19 @@
     <button class="button" onclick="startAdventure()">Start Adventure</button>
 </div>
 
+<!-- Story section -->
 <div id="storyContainer" class="story-container" style="display:none;">
     <p id="storyText"></p>
     <button class="button" onclick="startExploration()">Start Exploration</button>
 </div>
 
+<!-- Exploration section -->
 <div id="exploreContainer" class="explore-container" style="display:none;">
     <p>Click on different organelles to explore them!</p>
     <div id="cellCanvas"></div>
 </div>
 
+<!-- Mini-game section -->
 <div id="minigameContainer" class="minigame-container" style="display:none;">
     <div id="dnaRepairGame" style="display:none;">
         <p>Fix the DNA sequence!</p>
@@ -32,6 +35,9 @@
     </div>
     <button class="button" onclick="nextChapter()">Next Chapter</button>
 </div>
+
+<!-- Feedback area -->
+<div id="feedback" class="feedback"></div>
 
 <script src="script.js"></script>
 
