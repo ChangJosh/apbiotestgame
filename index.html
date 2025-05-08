@@ -98,37 +98,6 @@
             display: none;
         }
 
-        /* Animated background effect for visual interest */
-        @keyframes backgroundAnimation {
-            0% { background-color: #3a8d99; }
-            50% { background-color: #5ac8e0; }
-            100% { background-color: #3a8d99; }
-        }
-
-        #storyContainer {
-            animation: backgroundAnimation 3s infinite alternate; /* Background color change */
-        }
-
-        /* Proper layout of choices and text */
-        .button-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* Center all text containers */
-        #gameContainer {
-            text-align: center;
-            justify-content: center;
-        }
-
-        /* Minor responsiveness for smaller screens */
-        @media (max-width: 768px) {
-            .button {
-                width: 80%;
-            }
-        }
-
         /* Scene Transitions */
         .fade-in {
             animation: fadeIn 1s ease-in forwards;
@@ -148,7 +117,7 @@
 <div id="gameContainer">
     <!-- Story and Dialogue -->
     <div id="storyContainer" class="fade-in">
-        <p id="storyText">Welcome to BioQuest! You are a young scientist tasked with exploring the biological world. Ready for an adventure?</p>
+        <p id="storyText">Welcome to BioQuest! As a young scientist, you're about to explore the microscopic world inside a living cell. Ready for your first adventure?</p>
         <div class="button-container">
             <button class="button" onclick="startAdventure()">Start Adventure</button>
         </div>
@@ -156,20 +125,20 @@
 
     <!-- Adventure Map -->
     <div id="mapContainer" class="fade-in" style="display:none;">
-        <p id="mapText">You enter the biological world. Where would you like to go?</p>
+        <p id="mapText">You step into a microscopic world. Which area of the cell will you explore first?</p>
         <div class="button-container">
-            <button class="button" onclick="exploreCell()">Enter the Cell</button>
-            <button class="button" onclick="exploreDNA()">Explore the DNA Strand</button>
+            <button class="button" onclick="exploreMitochondria()">Explore the Mitochondria</button>
+            <button class="button" onclick="exploreNucleus()">Explore the Nucleus</button>
         </div>
     </div>
 
     <!-- Battle Section -->
     <div id="battleContainer" class="fade-in" style="display:none;">
-        <p id="battleMessage">You encounter a cell creature! Prepare for battle!</p>
+        <p id="battleMessage">You encounter a rogue virus! It's time to protect the cell!</p>
         <div class="button-container">
-            <button class="button" onclick="performAction('Attack')">Attack</button>
-            <button class="button" onclick="performAction('Defend')">Defend</button>
-            <button class="button" onclick="performAction('Heal')">Heal</button>
+            <button class="button" onclick="performAction('Attack')">Attack with Enzymes</button>
+            <button class="button" onclick="performAction('Defend')">Defend with Cell Membrane</button>
+            <button class="button" onclick="performAction('Heal')">Repair with DNA</button>
         </div>
     </div>
 
@@ -188,18 +157,18 @@ let battleInProgress = false;
 
 const storyStages = [
     {
-        text: "Welcome to BioQuest, young scientist! You must explore different biological systems to save your project.",
-        nextText: "You enter the Cell. What will you explore first?",
+        text: "Welcome to BioQuest! You're about to explore a living cell. There’s so much to discover! Let’s dive in!",
+        nextText: "You enter the cell and find yourself at a crossroad. What will you explore first?",
         choices: [
-            { text: "Explore the Nucleus", action: exploreCell },
-            { text: "Explore the Mitochondria", action: exploreDNA }
+            { text: "Explore the Mitochondria", action: exploreMitochondria },
+            { text: "Explore the Nucleus", action: exploreNucleus }
         ]
     },
     {
-        text: "You have entered the DNA strand! Solve the sequence puzzle to progress.",
-        nextText: "The DNA strand puzzle appears before you. Solve it correctly to continue.",
+        text: "The Mitochondria is known as the powerhouse of the cell. It's time to charge up the energy!",
+        nextText: "There’s a rogue virus attacking the Mitochondria. Time to defend!",
         choices: [
-            { text: "Start DNA Repair", action: startBattle }
+            { text: "Fight the Virus!", action: startBattle }
         ]
     }
 ];
@@ -210,17 +179,17 @@ function startAdventure() {
     document.getElementById("mapContainer").style.display = "block"; // Show map options
 }
 
-// Explore Cell Location
-function exploreCell() {
+// Explore Mitochondria Location
+function exploreMitochondria() {
     currentStage = 1; // Advance to next stage
     displayStory(storyStages[currentStage]); // Display next story stage
     document.getElementById("mapContainer").style.display = "none"; // Hide map options
     document.getElementById("battleContainer").style.display = "block"; // Show battle section
 }
 
-// Explore DNA Strand Location
-function exploreDNA() {
-    alert("Exploring DNA! You need to repair a sequence!");
+// Explore Nucleus Location
+function exploreNucleus() {
+    alert("Exploring the Nucleus: DNA repair and protein synthesis!");
     startBattle();
 }
 
@@ -245,20 +214,20 @@ function displayStory(stage) {
 // Battle Mechanics (basic)
 function startBattle() {
     battleInProgress = true;
-    document.getElementById("battleMessage").innerText = "A cell creature appears! What will you do?";
+    document.getElementById("battleMessage").innerText = "A rogue virus appears! It’s attacking the mitochondria! Prepare to defend the cell!";
     document.getElementById("battleContainer").style.display = "block";
 }
 
 function performAction(action) {
     if (action === "Attack") {
-        alert("You attack the creature!");
-        endBattle("You defeated the creature!");
+        alert("You unleash powerful enzymes to attack the virus!");
+        endBattle("The virus is defeated!");
     } else if (action === "Defend") {
-        alert("You defend against the creature's attack!");
-        endBattle("The creature retreated!");
+        alert("You defend with the cell membrane, blocking the virus's attack!");
+        endBattle("The virus retreats!");
     } else if (action === "Heal") {
-        alert("You heal yourself!");
-        endBattle("You recovered some health!");
+        alert("You repair the damaged DNA to restore the mitochondria!");
+        endBattle("The mitochondria are back in action!");
     }
 }
 
