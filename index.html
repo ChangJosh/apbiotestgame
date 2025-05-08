@@ -26,6 +26,15 @@
             letter-spacing: 1px;
         }
 
+        .screen {
+            display: none;
+            text-align: center;
+            width: 100%;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+        }
+
         #gameContainer {
             padding: 20px;
             max-width: 900px;
@@ -71,11 +80,6 @@
 
         .button:focus {
             outline: none;
-        }
-
-        #battleContainer {
-            margin-top: 30px;
-            display: block;
         }
 
         .barContainer {
@@ -152,11 +156,26 @@
 
 <!-- Game Container -->
 <div id="gameContainer">
-    <p id="storyText">You awaken in a dark dungeon. You must escape by defeating monsters and solving biology-related questions. Will you make it out alive?</p>
 
-    <div id="battleContainer">
+    <!-- Story Screen -->
+    <div id="storyScreen" class="screen">
+        <p id="storyText">You awaken in a dark dungeon. You must escape by defeating monsters and solving biology-related questions. Will you make it out alive?</p>
+        <button class="button" onclick="startGame()">Start Adventure</button>
+    </div>
+
+    <!-- Question Answering Screen -->
+    <div id="questionScreen" class="screen">
+        <p id="questionText">What is the powerhouse of the cell?</p>
+        <input type="text" id="answerInput" placeholder="Your answer">
+        <button class="button" onclick="checkAnswer()">Submit Answer</button>
+        <div id="questionResult" class="result"></div>
+    </div>
+
+    <!-- Action Screen -->
+    <div id="actionScreen" class="screen">
         <p id="battleMessage">A wild monster blocks your path!</p>
 
+        <!-- Health and Energy Bars -->
         <div id="virusHealthBar" class="barContainer">
             <div id="virusHealthFill" class="barFill virusHealthFill" style="width: 100%"></div>
         </div>
@@ -180,13 +199,7 @@
 
         <div id="keyMessage"></div>
 
-        <div id="questionContainer" style="display:none;">
-            <p id="questionText">What is the powerhouse of the cell?</p>
-            <input type="text" id="answerInput" placeholder="Your answer">
-            <button class="button" onclick="checkAnswer()">Submit Answer</button>
-        </div>
-
-        <div id="actionButtons" style="display:none;">
+        <div id="actionButtons">
             <button class="button" id="attackButton" onclick="performAction('Attack')">Attack with Enzyme</button>
             <button class="button" id="defendButton" onclick="performAction('Defend')">Defend with Membrane</button>
             <button class="button" id="healButton" onclick="performAction('Heal')">Repair DNA</button>
@@ -214,6 +227,17 @@
         { question: "What organelle is responsible for protein synthesis?", answer: "ribosome" },
         { question: "What type of cell division results in two identical cells?", answer: "mitosis" }
     ];
+
+    function showScreen(screenId) {
+        // Hide all screens
+        const screens = document.querySelectorAll('.screen');
+        screens.forEach(screen => {
+            screen.style.display = 'none';
+        });
+
+        // Show the desired screen
+        document.getElementById(screenId).style.display = 'flex';
+    }
 
     function updateHealthBar() {
         document.getElementById("healthFill").style.width = `${health}%`;
@@ -245,44 +269,29 @@
         }
     }
 
-    function updateButtons() {
-        const attackButton = document.getElementById("attackButton");
-        const defendButton = document.getElementById("defendButton");
-        const healButton = document.getElementById("healButton");
-
-        // Disable buttons if not enough energy
-        attackButton.disabled = energy < actionCosts.Attack;
-        defendButton.disabled = energy < actionCosts.Defend;
-        healButton.disabled = energy < actionCosts.Heal;
-    }
-
     function askQuestion() {
         const questionData = questions[Math.floor(Math.random() * questions.length)];
-        const questionContainer = document.getElementById("questionContainer");
         document.getElementById("questionText").innerText = questionData.question;
-        questionContainer.style.display = "block";
     }
 
     function checkAnswer() {
         const answerInput = document.getElementById("answerInput").value.toLowerCase();
         const correctAnswer = questions[Math.floor(Math.random() * questions.length)].answer.toLowerCase();
+        const resultDiv = document.getElementById("questionResult");
 
         if (answerInput === correctAnswer) {
             energy += 20;
-            questionsAnswered += 1;
-            alert("Correct answer! You gained 20 energy.");
+            resultDiv.innerHTML = "<span style='color: green;'>Correct answer! You gained 20 energy.</span>";
         } else {
             energy -= 10;
-            alert("Incorrect answer! You lost 10 energy.");
+            resultDiv.innerHTML = "<span style='color: red;'>Incorrect answer! You lost 10 energy.</span>";
         }
 
         updateEnergyBar();
-        document.getElementById("questionContainer").style.display = "none";
-        
+        questionsAnswered += 1;
         if (questionsAnswered >= 3) {
-            // Show action buttons after answering 3 questions
-            document.getElementById("actionButtons").style.display = "block";
-            questionsAnswered = 0;  // Reset the question count
+            showScreen('actionScreen');
+            questionsAnswered = 0;
         } else {
             askQuestion();  // Ask another question
         }
@@ -332,6 +341,12 @@
         monsterHealth = 100;
         document.getElementById("battleMessage").innerText = `A wild monster blocks your path in room ${dungeonLevel}!`;
         updateVirusHealthBar();
+        showScreen('questionScreen');
+    }
+
+    function startGame() {
+        showScreen('questionScreen');
+        askQuestion();
     }
 
     function resetGame() {
@@ -343,11 +358,11 @@
         updateHealthBar();
         updateEnergyBar();
         updateVirusHealthBar();
-        startNewRoom();
+        showScreen('storyScreen');
     }
 
-    // Initialize the game
-    askQuestion();  // Ask the first question to begin the game
+    // Start with the story screen
+    showScreen('storyScreen');
 </script>
 
 </body>
