@@ -83,6 +83,10 @@
             display: none;
         }
 
+        #questionContainer {
+            display: none;
+        }
+
         #inventoryContainer {
             margin-top: 40px;
             display: none;
@@ -135,7 +139,7 @@
 <!-- Game Container -->
 <div id="gameContainer">
     <div id="storyContainer" class="fade-in">
-        <p id="storyText">Welcome to BioQuest! As a young scientist, you're about to explore the microscopic world inside a living cell. Ready for your first adventure?</p>
+        <p id="storyText">Welcome to BioQuest! You're about to explore the world inside a living cell. Ready for your first adventure?</p>
         <div class="button-container">
             <button class="button" onclick="startAdventure()">Start Adventure</button>
         </div>
@@ -143,7 +147,7 @@
 
     <!-- Adventure Map -->
     <div id="mapContainer" class="fade-in" style="display:none;">
-        <p id="mapText">You step into a microscopic world. Which area of the cell will you explore first?</p>
+        <p id="mapText">You step into the cell. Choose an area to explore:</p>
         <div class="button-container">
             <button class="button" onclick="exploreMitochondria()">Explore the Mitochondria</button>
             <button class="button" onclick="exploreNucleus()">Explore the Nucleus</button>
@@ -158,13 +162,22 @@
         <div id="energyFill" class="barFill energyFill" style="width: 100%"></div>
     </div>
 
+    <!-- Question Section -->
+    <div id="questionContainer" class="fade-in" style="display:none;">
+        <p id="questionText">Question will appear here.</p>
+        <div class="button-container">
+            <button class="button" onclick="answerQuestion(true)">True</button>
+            <button class="button" onclick="answerQuestion(false)">False</button>
+        </div>
+    </div>
+
     <!-- Battle Section -->
     <div id="battleContainer" class="fade-in" style="display:none;">
-        <p id="battleMessage">You encounter a rogue virus! It's time to protect the cell!</p>
+        <p id="battleMessage">You encounter a virus! Choose your action:</p>
         <div class="button-container">
-            <button class="button" onclick="performAction('Attack')">Attack with Enzymes</button>
+            <button class="button" onclick="performAction('Attack')">Attack with Enzyme</button>
             <button class="button" onclick="performAction('Defend')">Defend with Cell Membrane</button>
-            <button class="button" onclick="performAction('Heal')">Repair with DNA</button>
+            <button class="button" onclick="performAction('Heal')">Repair DNA</button>
         </div>
     </div>
 
@@ -178,9 +191,10 @@
 <script>
 // Variables for story progression, health, energy, and battle mechanics
 let health = 100;
-let energy = 100;
+let energy = 0;
 let battleInProgress = false;
 let currentStage = 0;
+let currentQuestion = 0;
 
 const storyStages = [
     {
@@ -190,11 +204,17 @@ const storyStages = [
         ]
     },
     {
-        text: "You step into the cell. The Mitochondria glows with energy. But wait—there’s a rogue virus attacking it!",
+        text: "You step into the cell. The Mitochondria glow with energy. But wait—there’s a rogue virus attacking it!",
         choices: [
             { text: "Fight the Virus", action: startBattle }
         ]
     }
+];
+
+const questions = [
+    { question: "Is the mitochondria responsible for energy production?", answer: true },
+    { question: "Do plant cells have mitochondria?", answer: false },
+    { question: "Is DNA stored in the nucleus?", answer: true },
 ];
 
 function startAdventure() {
@@ -206,7 +226,8 @@ function exploreMitochondria() {
     currentStage = 1;
     displayStory(storyStages[currentStage]);
     document.getElementById("mapContainer").style.display = "none";
-    document.getElementById("battleContainer").style.display = "block";
+    document.getElementById("questionContainer").style.display = "block";
+    loadNextQuestion();
 }
 
 function exploreNucleus() {
@@ -230,55 +251,69 @@ function displayStory(stage) {
     document.getElementById("storyContainer").appendChild(buttonContainer);
 }
 
+function loadNextQuestion() {
+    if (currentQuestion < questions.length) {
+        const question = questions[currentQuestion];
+        document.getElementById("questionText").innerText = question.question;
+    } else {
+        alert("You're ready to battle!");
+        document.getElementById("questionContainer").style.display = "none";
+        document.getElementById("battleContainer").style.display = "block";
+    }
+}
+
+function answerQuestion(isCorrect) {
+    const current = questions[currentQuestion];
+    if (current.answer === isCorrect) {
+        energy += 20;
+        updateEnergyBar();
+        alert("Correct! You gained 20 energy.");
+    } else {
+        alert("Wrong! Try again.");
+    }
+    currentQuestion++;
+    loadNextQuestion();
+}
+
 function startBattle() {
     battleInProgress = true;
-    document.getElementById("battleMessage").innerText = "A rogue virus appears! It’s attacking the mitochondria! Prepare to defend the cell!";
+    document.getElementById("battleMessage").innerText = "A rogue virus appears! Time to protect the mitochondria!";
 }
 
 function performAction(action) {
-    if (action === "Attack") {
-        if (energy >= 30) {
-            energy -= 30;
-            updateEnergyBar();
-            alert("You unleash powerful enzymes to attack the virus!");
-            endBattle("The virus is defeated!");
-        } else {
-            alert("Not enough energy!");
-        }
-    } else if (action === "Defend") {
-        if (energy >= 20) {
-            energy -= 20;
-            updateEnergyBar();
-            alert("You defend with the cell membrane, blocking the virus's attack!");
-            endBattle("The virus retreats!");
-        } else {
-            alert("Not enough energy!");
-        }
-    } else if (action === "Heal") {
-        if (energy >= 40) {
-            energy -= 40;
-            health += 10;
-            updateEnergyBar();
-            updateHealthBar();
-            alert("You repair the damaged DNA to restore the mitochondria!");
-            endBattle("The mitochondria are back in action!");
-        } else {
-            alert("Not enough energy!");
-        }
+    if (action === "Attack" && energy >= 30) {
+        energy -= 30;
+        updateEnergyBar();
+        alert("You unleash enzymes to attack the virus!");
+        endBattle("The virus is defeated!");
+    } else if (action === "Defend" && energy >= 20) {
+        energy -= 20;
+        updateEnergyBar();
+        alert("You defend with the cell membrane!");
+        endBattle("The virus retreats!");
+    } else if (action === "Heal" && energy >= 40) {
+        energy -= 40;
+        health += 10;
+        updateEnergyBar();
+        updateHealthBar();
+        alert("You repair the DNA and restore the mitochondria!");
+        endBattle("The mitochondria are fully restored!");
+    } else {
+        alert("Not enough energy!");
     }
 }
 
 function updateHealthBar() {
     document.getElementById("healthFill").style.width = `${health}%`;
     if (health <= 0) {
-        alert("You have lost the battle! Try again.");
+        alert("You lost the battle! Try again.");
     }
 }
 
 function updateEnergyBar() {
     document.getElementById("energyFill").style.width = `${energy}%`;
     if (energy <= 0) {
-        alert("You have run out of energy! Game over.");
+        alert("You ran out of energy! Game over.");
     }
 }
 
