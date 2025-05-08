@@ -3,43 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BioQuest: Journey Through the Cell</title>
+    <title>BioQuest: Cell Explorer</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<header>BioQuest: Journey Through the Cell</header>
+<header>BioQuest: Cell Explorer</header>
 
-<div class="container">
-    <button class="button" onclick="startAdventure()">Start Adventure</button>
-</div>
-
-<!-- Story section -->
-<div id="storyContainer" class="story-container" style="display:none;">
-    <p id="storyText"></p>
-    <button class="button" onclick="startExploration()">Start Exploration</button>
-</div>
-
-<!-- Exploration section -->
-<div id="exploreContainer" class="explore-container" style="display:none;">
-    <p>Click on different organelles to explore them!</p>
-    <div id="cellCanvas"></div>
-</div>
-
-<!-- Mini-game section -->
-<div id="minigameContainer" class="minigame-container" style="display:none;">
-    <div id="dnaRepairGame" style="display:none;">
-        <p>Fix the DNA sequence!</p>
-        <div id="dnaRepair"></div>
-        <button class="button" onclick="completeMinigame()">Complete DNA Repair</button>
+<!-- Game Container -->
+<div id="gameContainer">
+    <!-- Story and Dialogue -->
+    <div id="storyContainer">
+        <p id="storyText">You are a young scientist on a mission to explore the biological world!</p>
+        <button class="button" onclick="startAdventure()">Start Adventure</button>
     </div>
-    <button class="button" onclick="nextChapter()">Next Chapter</button>
+
+    <!-- Adventure Map -->
+    <div id="mapContainer" class="map-container" style="display:none;">
+        <p>Explore the cell and solve challenges!</p>
+        <div id="map">
+            <button onclick="exploreCell()">Enter the Cell</button>
+            <button onclick="exploreDNA()">Explore the DNA Strand</button>
+        </div>
+    </div>
+
+    <!-- Battle and Mini-games -->
+    <div id="battleContainer" class="battle-container" style="display:none;">
+        <p id="battleMessage"></p>
+        <button class="button" onclick="startBattle()">Start Battle</button>
+    </div>
+
+    <!-- Inventory -->
+    <div id="inventoryContainer" class="inventory-container" style="display:none;">
+        <p>Your Inventory:</p>
+        <ul id="inventoryList"></ul>
+    </div>
+
 </div>
 
-<!-- Feedback area -->
-<div id="feedback" class="feedback"></div>
-
-<script src="script.js"></script>
+<script src="game.js"></script>
 
 </body>
 </html>
