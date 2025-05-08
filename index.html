@@ -157,7 +157,7 @@
 
 <!-- Game Container -->
 <div id="gameContainer">
-    <div id="battleContainer" style="display:none;">
+    <div id="battleContainer">
         <p id="battleMessage">A rogue virus appears! Time to protect the mitochondria!</p>
         
         <!-- Battle Actions -->
@@ -184,6 +184,7 @@
 
     <!-- Result Message -->
     <div id="resultMessage" class="result"></div>
+    <div id="questionContainer" class="result"></div>
 </div>
 
 <script>
@@ -198,6 +199,14 @@ const actionCosts = {
     Defend: 20,
     Heal: 40
 };
+
+// Example biology-related questions
+const questions = [
+    { question: "What is the powerhouse of the cell?", answer: "mitochondria" },
+    { question: "What molecule carries genetic information?", answer: "DNA" },
+    { question: "What organelle is responsible for protein synthesis?", answer: "ribosome" },
+    { question: "What type of cell division results in two identical cells?", answer: "mitosis" }
+];
 
 // Update energy and health bars
 function updateHealthBar() {
@@ -277,6 +286,19 @@ function performAction(action) {
     updateHealthBar();
     updateButtons();
 
+    // Virus counterattack
+    setTimeout(() => {
+        const damage = Math.floor(Math.random() * 20) + 10; // Virus attack between 10 to 30 damage
+        health -= damage;
+        updateHealthBar();
+        if (health <= 0) {
+            alert("You lost the battle! Try again.");
+            resetGame();
+        } else {
+            askQuestion();
+        }
+    }, 1000);
+
     // Virus defeat condition
     if (virusHealth <= 0) {
         alert("You defeated the virus!");
@@ -287,6 +309,36 @@ function performAction(action) {
     setTimeout(() => {
         resultMessage.style.display = "none";
     }, 2000);
+}
+
+// Ask biology question to gain energy
+function askQuestion() {
+    const questionData = questions[Math.floor(Math.random() * questions.length)];
+    const questionContainer = document.getElementById("questionContainer");
+
+    questionContainer.innerHTML = `<p>${questionData.question}</p>
+        <input type="text" id="answerInput" placeholder="Your answer" />
+        <button class="button" onclick="checkAnswer('${questionData.answer}')">Submit Answer</button>`;
+
+    questionContainer.style.display = "block";
+}
+
+// Check if the answer is correct
+function checkAnswer(correctAnswer) {
+    const answerInput = document.getElementById("answerInput").value.toLowerCase();
+    const questionContainer = document.getElementById("questionContainer");
+
+    if (answerInput === correctAnswer.toLowerCase()) {
+        energy += 20; // Reward energy for correct answer
+        alert("Correct answer! You gained 20 energy.");
+    } else {
+        energy -= 10; // Penalty for incorrect answer
+        alert("Incorrect answer! You lost 10 energy.");
+    }
+
+    updateEnergyBar();
+    updateButtons();
+    questionContainer.style.display = "none";
 }
 
 // Reset the game after a battle
