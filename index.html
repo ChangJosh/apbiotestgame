@@ -78,18 +78,10 @@
             display: block;
         }
 
-        #healthBar {
+        .barContainer {
             width: 100%;
             height: 20px;
             background: #e0e0e0;
-            border-radius: 10px;
-            margin: 20px 0;
-        }
-
-        #energyBar {
-            width: 100%;
-            height: 20px;
-            background: #f9e555;
             border-radius: 10px;
             margin: 20px 0;
         }
@@ -105,6 +97,17 @@
 
         .energyFill {
             background: #57c0d7;
+        }
+
+        .virusHealthFill {
+            background: #ffcc00;
+        }
+
+        .barText {
+            display: flex;
+            justify-content: space-between;
+            font-size: 16px;
+            margin-top: 5px;
         }
 
         .result {
@@ -153,25 +156,41 @@
 
     <div id="battleContainer">
         <p id="battleMessage">A wild monster blocks your path!</p>
-        
-        <button class="button" id="attackButton" onclick="performAction('Attack')">Attack with Enzyme</button>
-        <button class="button" id="defendButton" onclick="performAction('Defend')">Defend with Membrane</button>
-        <button class="button" id="healButton" onclick="performAction('Heal')">Repair DNA</button>
-    </div>
 
-    <div id="healthBar">
-        <div id="healthFill" class="barFill healthFill" style="width: 100%"></div>
-    </div>
-    <div id="energyBar">
-        <div id="energyFill" class="barFill energyFill" style="width: 100%"></div>
-    </div>
+        <div id="virusHealthBar" class="barContainer">
+            <div id="virusHealthFill" class="barFill virusHealthFill" style="width: 100%"></div>
+        </div>
+        <div class="barText">
+            <span>Monster Health: <span id="virusHealthText">100/100</span></span>
+        </div>
 
-    <div id="keyMessage"></div>
+        <div id="healthBar" class="barContainer">
+            <div id="healthFill" class="barFill healthFill" style="width: 100%"></div>
+        </div>
+        <div class="barText">
+            <span>Your Health: <span id="healthText">100/100</span></span>
+        </div>
 
-    <div id="questionContainer" style="display:none;">
-        <p id="questionText">What is the powerhouse of the cell?</p>
-        <input type="text" id="answerInput" placeholder="Your answer">
-        <button class="button" onclick="checkAnswer()">Submit Answer</button>
+        <div id="energyBar" class="barContainer">
+            <div id="energyFill" class="barFill energyFill" style="width: 100%"></div>
+        </div>
+        <div class="barText">
+            <span>Your Energy: <span id="energyText">100/100</span></span>
+        </div>
+
+        <div id="keyMessage"></div>
+
+        <div id="questionContainer" style="display:none;">
+            <p id="questionText">What is the powerhouse of the cell?</p>
+            <input type="text" id="answerInput" placeholder="Your answer">
+            <button class="button" onclick="checkAnswer()">Submit Answer</button>
+        </div>
+
+        <div id="actionButtons" style="display:none;">
+            <button class="button" id="attackButton" onclick="performAction('Attack')">Attack with Enzyme</button>
+            <button class="button" id="defendButton" onclick="performAction('Defend')">Defend with Membrane</button>
+            <button class="button" id="healButton" onclick="performAction('Heal')">Repair DNA</button>
+        </div>
     </div>
 </div>
 
@@ -182,8 +201,7 @@
     let keys = 0;
     let dungeonLevel = 1;
 
-    let playerTurn = true;  // Keeps track of whether it's the player's turn
-
+    let playerTurn = false;  // Player cannot act until after answering the question
     const actionCosts = {
         Attack: 30,
         Defend: 20,
@@ -199,6 +217,7 @@
 
     function updateHealthBar() {
         document.getElementById("healthFill").style.width = `${health}%`;
+        document.getElementById("healthText").innerText = `${health}/100`;
         if (health <= 0) {
             alert("You have been defeated! Game over.");
             resetGame();
@@ -207,9 +226,22 @@
 
     function updateEnergyBar() {
         document.getElementById("energyFill").style.width = `${energy}%`;
+        document.getElementById("energyText").innerText = `${energy}/100`;
         if (energy <= 0) {
             alert("You have run out of energy! Game over.");
             resetGame();
+        }
+    }
+
+    function updateVirusHealthBar() {
+        document.getElementById("virusHealthFill").style.width = `${monsterHealth}%`;
+        document.getElementById("virusHealthText").innerText = `${monsterHealth}/100`;
+        if (monsterHealth <= 0) {
+            alert("You defeated the monster!");
+            keys += 1;
+            document.getElementById("keyMessage").innerText = `You gained a key! Total keys: ${keys}`;
+            dungeonLevel += 1;
+            startNewRoom();
         }
     }
 
@@ -218,66 +250,10 @@
         const defendButton = document.getElementById("defendButton");
         const healButton = document.getElementById("healButton");
 
-        // Disable attack, defend, heal based on energy
+        // Disable buttons if not enough energy
         attackButton.disabled = energy < actionCosts.Attack || !playerTurn;
         defendButton.disabled = energy < actionCosts.Defend || !playerTurn;
         healButton.disabled = energy < actionCosts.Heal || !playerTurn;
-    }
-
-    function performAction(action) {
-        if (!playerTurn) return;  // If it's not the player's turn, do nothing
-
-        const resultMessage = document.createElement("div");
-        resultMessage.classList.add("result");
-
-        if (action === "Attack" && energy >= actionCosts.Attack) {
-            energy -= actionCosts.Attack;
-            monsterHealth -= 30;
-            resultMessage.classList.add("correct");
-            resultMessage.innerHTML = "You dealt damage to the monster!";
-        } else if (action === "Defend" && energy >= actionCosts.Defend) {
-            energy -= actionCosts.Defend;
-            resultMessage.classList.add("correct");
-            resultMessage.innerHTML = "You defended against the monster's attack!";
-        } else if (action === "Heal" && energy >= actionCosts.Heal) {
-            energy -= actionCosts.Heal;
-            health += 10;
-            resultMessage.classList.add("correct");
-            resultMessage.innerHTML = "You repaired your DNA and restored health!";
-        } else {
-            resultMessage.classList.add("incorrect");
-            resultMessage.innerHTML = "Not enough energy to perform this action!";
-        }
-
-        document.body.append(resultMessage);
-        updateEnergyBar();
-        updateHealthBar();
-        updateButtons();
-
-        setTimeout(() => resultMessage.remove(), 2000);
-
-        // Disable player input and start monster's turn
-        playerTurn = false;
-        setTimeout(monsterTurn, 1500);  // Wait before the virus attacks back
-    }
-
-    function monsterTurn() {
-        const damage = Math.floor(Math.random() * 20) + 10;
-        health -= damage;
-        updateHealthBar();
-
-        if (health > 0) {
-            // Enable player action again after virus attacks
-            playerTurn = true;
-            updateButtons();
-            askQuestion();
-        }
-    }
-
-    function startNewRoom() {
-        monsterHealth = 100;
-        document.getElementById("battleMessage").innerText = `A wild monster blocks your path in room ${dungeonLevel}!`;
-        document.getElementById("keyMessage").innerText = "";
     }
 
     function askQuestion() {
@@ -300,25 +276,59 @@
         }
 
         updateEnergyBar();
-        updateButtons();
         document.getElementById("questionContainer").style.display = "none";
+        document.getElementById("actionButtons").style.display = "block";  // Show action buttons after answering
+        playerTurn = true;  // Enable player's turn after answering
+        updateButtons();
     }
 
-    function resetGame() {
-        health = 100;
-        energy = 100;
-        monsterHealth = 100;
-        keys = 0;
-        dungeonLevel = 1;
-        updateEnergyBar();
+    function performAction(action) {
+        if (!playerTurn) return;  // If it's not the player's turn, do nothing
+
+        if (action === "Attack" && energy >= actionCosts.Attack) {
+            energy -= actionCosts.Attack;
+            monsterHealth -= 30;
+            alert("You dealt damage to the monster!");
+        } else if (action === "Defend" && energy >= actionCosts.Defend) {
+            energy -= actionCosts.Defend;
+            alert("You defended against the monster's attack!");
+        } else if (action === "Heal" && energy >= actionCosts.Heal) {
+            energy -= actionCosts.Heal;
+            health += 10;
+            alert("You repaired your DNA and restored health!");
+        } else {
+            alert("Not enough energy to perform this action!");
+        }
+
         updateHealthBar();
-        updateButtons();
-        document.getElementById("keyMessage").innerText = "";
-        document.getElementById("storyText").innerText = "You awaken in a dark dungeon. You must escape by defeating monsters and solving biology-related questions. Will you make it out alive?";
+        updateEnergyBar();
+        updateVirusHealthBar();
+
+        // Disable player input and start monster's turn
+        playerTurn = false;
+        setTimeout(monsterTurn, 1500);  // Wait before the virus attacks back
+    }
+
+    function monsterTurn() {
+        const damage = Math.floor(Math.random() * 20) + 10;
+        health -= damage;
+        updateHealthBar();
+
+        if (health > 0) {
+            playerTurn = true;  // Enable player's turn again after virus attacks
+            updateButtons();
+            askQuestion();  // Ask a question before the next action
+        }
+    }
+
+    function startNewRoom() {
+        monsterHealth = 100;
+        document.getElementById("battleMessage").innerText = `A wild monster blocks your path in room ${dungeonLevel}!`;
+        updateVirusHealthBar();
     }
 
     // Initialize the game
-    startNewRoom();
+    askQuestion();  // Ask the first question to begin the game
 </script>
 
 </body>
