@@ -8,53 +8,96 @@
         /* General Body and Layout */
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f2f7fc;
+            background: linear-gradient(to bottom, #1b1b1b, #2a2a2a); /* Dark gradient background */
             margin: 0;
             padding: 0;
-            color: #333;
+            color: white;
         }
 
         /* Header */
         header {
-            background-color: #4CAF50;
+            background: linear-gradient(to right, #ff7e5f, #feb47b); /* Vibrant gradient */
             color: white;
+            padding: 30px;
+            font-size: 35px;
+            text-align: center;
+            border-bottom: 2px solid #ffffff;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+        }
+
+        /* Main Game Container */
+        #gameContainer {
             padding: 20px;
-            font-size: 30px;
+            max-width: 800px;
+            margin: 0 auto;
             text-align: center;
         }
 
-        /* Button Styles */
+        /* Button Styles - Inspired by Roblox Rivals */
         .button {
-            background-color: #4CAF50; /* Solid Green */
+            background: linear-gradient(to right, #4CAF50, #45a049); /* Smooth gradient green */
             color: white;
-            font-size: 20px;
-            padding: 15px 30px;
+            font-size: 22px;
+            padding: 18px 35px;
             border-radius: 12px;
             border: none;
             cursor: pointer;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2), 0px -4px 8px rgba(255, 255, 255, 0.2);
+            box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease-in-out;
-            margin-top: 20px;
-            font-weight: bold;
+            margin: 10px;
             text-transform: uppercase;
-            display: inline-block;
+            font-weight: bold;
+            width: 220px;
+            margin-top: 20px;
         }
 
         .button:hover {
             transform: scale(1.05);
-            background-color: #45a049; /* Slightly darker green */
-            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3), 0px -6px 12px rgba(255, 255, 255, 0.3);
+            background: linear-gradient(to right, #45a049, #4CAF50); /* Inverted gradient for hover */
+            box-shadow: 0px 10px 16px rgba(0, 0, 0, 0.4);
         }
 
         .button:active {
-            transform: scale(1);
-            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.2);
+            transform: scale(0.98);
+            box-shadow: inset 0px 4px 8px rgba(0, 0, 0, 0.3);
         }
 
-        /* Other containers */
-        .map-container, .battle-container, .inventory-container {
-            text-align: center;
-            margin-top: 20px;
+        .button:focus {
+            outline: none;
+        }
+
+        /* Story and Dialogue Box */
+        #storyText {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Adventure Map Section */
+        #mapContainer {
+            margin-top: 30px;
+        }
+
+        /* Battle Section */
+        #battleContainer {
+            display: none;
+        }
+
+        /* Inventory Section */
+        #inventoryContainer {
+            margin-top: 30px;
+            display: none;
+        }
+
+        /* Animated background effect for visual interest */
+        @keyframes backgroundAnimation {
+            0% { background-color: #ff7e5f; }
+            50% { background-color: #feb47b; }
+            100% { background-color: #ff7e5f; }
+        }
+
+        #storyContainer {
+            animation: backgroundAnimation 2s infinite alternate; /* Background color change */
         }
     </style>
 </head>
@@ -66,7 +109,7 @@
 <div id="gameContainer">
     <!-- Story and Dialogue -->
     <div id="storyContainer">
-        <p id="storyText">You are a young scientist on a mission to explore the biological world!</p>
+        <p id="storyText">Welcome to BioQuest! You are a young scientist tasked with exploring the biological world!</p>
         <button class="button" onclick="startAdventure()">Start Adventure</button>
     </div>
 
@@ -90,7 +133,6 @@
         <p>Your Inventory:</p>
         <ul id="inventoryList"></ul>
     </div>
-
 </div>
 
 <script>
