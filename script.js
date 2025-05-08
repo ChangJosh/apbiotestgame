@@ -34,6 +34,7 @@ function displayStory(stage) {
     stage.choices.forEach(choice => {
         const button = document.createElement('button');
         button.innerText = choice.text;
+        button.classList.add("button"); // Add button class to apply styling
         button.onclick = choice.action;
         buttonContainer.appendChild(button);
     });
@@ -50,9 +51,8 @@ function exploreCell() {
 
 // Explore DNA Strand Location
 function exploreDNA() {
-    // You can add DNA puzzles and challenges here
     alert("Exploring DNA! You need to repair a sequence!");
-    // Trigger Battle or Puzzle logic
+    startBattle();
 }
 
 // Start Battle/Puzzle Logic
@@ -63,18 +63,3 @@ function startBattle() {
         // You can simulate battles here with a choice of biology-based actions
     }
 }
-
-// Handle Inventory
-function addItemToInventory(item) {
-    inventory.push(item);
-    const inventoryList = document.getElementById("inventoryList");
-    const itemElement = document.createElement('li');
-    itemElement.innerText = item;
-    inventoryList.appendChild(itemElement);
-}
-
-// Inventory button action
-function showInventory() {
-    document.getElementById("inventoryContainer").style.display = "block";
-}
-
