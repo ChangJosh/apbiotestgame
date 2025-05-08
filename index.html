@@ -11,14 +11,26 @@
 <header>BioQuest: Journey Through the Cell</header>
 
 <div class="container">
-    <button class="button" onclick="startGame()">Start Game</button>
+    <button class="button" onclick="startAdventure()">Start Adventure</button>
 </div>
 
-<div class="quiz-container" id="quizContainer">
-    <div id="questionContainer" class="quiz-question"></div>
-    <div id="optionsContainer" class="quiz-options"></div>
-    <button class="button" onclick="nextQuestion()" id="nextButton" style="display:none;">Next Question</button>
-    <div id="score" class="result"></div>
+<div id="storyContainer" class="story-container" style="display:none;">
+    <p id="storyText"></p>
+    <button class="button" onclick="startExploration()">Start Exploration</button>
+</div>
+
+<div id="exploreContainer" class="explore-container" style="display:none;">
+    <p>Click on different organelles to explore them!</p>
+    <div id="cellCanvas"></div>
+</div>
+
+<div id="minigameContainer" class="minigame-container" style="display:none;">
+    <div id="dnaRepairGame" style="display:none;">
+        <p>Fix the DNA sequence!</p>
+        <div id="dnaRepair"></div>
+        <button class="button" onclick="completeMinigame()">Complete DNA Repair</button>
+    </div>
+    <button class="button" onclick="nextChapter()">Next Chapter</button>
 </div>
 
 <script src="script.js"></script>
