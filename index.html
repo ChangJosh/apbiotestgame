@@ -23,7 +23,7 @@
             text-align: center;
         }
 
-        /* Button Styles - Roblox Rivals Inspired with Improved Color Scheme */
+        /* Button Styles */
         .button {
             background-color: #4CAF50; /* Solid Green */
             color: white;
@@ -51,13 +51,8 @@
             box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.2);
         }
 
-        /* Button Container */
-        .map-container {
-            text-align: center;
-        }
-
         /* Other containers */
-        .inventory-container, .battle-container {
+        .map-container, .battle-container, .inventory-container {
             text-align: center;
             margin-top: 20px;
         }
@@ -124,30 +119,35 @@ const storyStages = [
 
 // Start the game and the first storyline
 function startAdventure() {
-    document.getElementById("storyContainer").style.display = "none";
-    displayStory(storyStages[currentStage]);
+    document.getElementById("storyContainer").style.display = "none"; // Hide intro screen
+    displayStory(storyStages[currentStage]); // Display first story stage
 }
 
 // Display story with choices
 function displayStory(stage) {
     document.getElementById("storyText").innerText = stage.text;
     const buttonContainer = document.createElement('div');
+    buttonContainer.id = "choiceButtons"; // To replace old buttons
+    buttonContainer.innerHTML = ''; // Clear any existing buttons
+
     stage.choices.forEach(choice => {
         const button = document.createElement('button');
         button.innerText = choice.text;
         button.classList.add("button"); // Add button class to apply styling
-        button.onclick = choice.action;
+        button.onclick = choice.action; // Link button to action
         buttonContainer.appendChild(button);
     });
+
+    // Append button choices to the story container
     document.getElementById("storyContainer").appendChild(buttonContainer);
 }
 
 // Explore Cell Location
 function exploreCell() {
     currentStage = 1; // Advance to next stage
-    displayStory(storyStages[currentStage]);
-    document.getElementById("mapContainer").style.display = "none";
-    document.getElementById("battleContainer").style.display = "block";
+    displayStory(storyStages[currentStage]); // Display next story stage
+    document.getElementById("mapContainer").style.display = "none"; // Hide map options
+    document.getElementById("battleContainer").style.display = "block"; // Show battle section
 }
 
 // Explore DNA Strand Location
