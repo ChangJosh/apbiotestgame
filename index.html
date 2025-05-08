@@ -4,7 +4,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BioQuest: Cell Explorer</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* General Body and Layout */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f2f7fc;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        /* Header */
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            font-size: 30px;
+            text-align: center;
+        }
+
+        /* Button Styles - Roblox Rivals Inspired with Improved Color Scheme */
+        .button {
+            background-color: #4CAF50; /* Solid Green */
+            color: white;
+            font-size: 20px;
+            padding: 15px 30px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2), 0px -4px 8px rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease-in-out;
+            margin-top: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .button:hover {
+            transform: scale(1.05);
+            background-color: #45a049; /* Slightly darker green */
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3), 0px -6px 12px rgba(255, 255, 255, 0.3);
+        }
+
+        .button:active {
+            transform: scale(1);
+            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Button Container */
+        .map-container {
+            text-align: center;
+        }
+
+        /* Other containers */
+        .inventory-container, .battle-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
 
@@ -22,8 +79,8 @@
     <div id="mapContainer" class="map-container" style="display:none;">
         <p>Explore the cell and solve challenges!</p>
         <div id="map">
-            <button onclick="exploreCell()">Enter the Cell</button>
-            <button onclick="exploreDNA()">Explore the DNA Strand</button>
+            <button class="button" onclick="exploreCell()">Enter the Cell</button>
+            <button class="button" onclick="exploreDNA()">Explore the DNA Strand</button>
         </div>
     </div>
 
@@ -41,7 +98,73 @@
 
 </div>
 
-<script src="game.js"></script>
+<script>
+// Variables for story progression, inventory, etc.
+let currentStage = 0;
+let inventory = [];
+let battleInProgress = false;
+
+const storyStages = [
+    {
+        text: "Welcome to BioQuest, young scientist! You must explore different biological systems to save your project.",
+        nextText: "You enter the Cell. What will you explore first?",
+        choices: [
+            { text: "Explore the Nucleus", action: exploreCell },
+            { text: "Explore the Mitochondria", action: exploreDNA }
+        ]
+    },
+    {
+        text: "You have entered the DNA strand! Solve the sequence puzzle to progress.",
+        nextText: "The DNA strand puzzle appears before you. Solve it correctly to continue.",
+        choices: [
+            { text: "Start DNA Repair", action: startBattle }
+        ]
+    }
+];
+
+// Start the game and the first storyline
+function startAdventure() {
+    document.getElementById("storyContainer").style.display = "none";
+    displayStory(storyStages[currentStage]);
+}
+
+// Display story with choices
+function displayStory(stage) {
+    document.getElementById("storyText").innerText = stage.text;
+    const buttonContainer = document.createElement('div');
+    stage.choices.forEach(choice => {
+        const button = document.createElement('button');
+        button.innerText = choice.text;
+        button.classList.add("button"); // Add button class to apply styling
+        button.onclick = choice.action;
+        buttonContainer.appendChild(button);
+    });
+    document.getElementById("storyContainer").appendChild(buttonContainer);
+}
+
+// Explore Cell Location
+function exploreCell() {
+    currentStage = 1; // Advance to next stage
+    displayStory(storyStages[currentStage]);
+    document.getElementById("mapContainer").style.display = "none";
+    document.getElementById("battleContainer").style.display = "block";
+}
+
+// Explore DNA Strand Location
+function exploreDNA() {
+    alert("Exploring DNA! You need to repair a sequence!");
+    startBattle();
+}
+
+// Start Battle/Puzzle Logic
+function startBattle() {
+    if (!battleInProgress) {
+        battleInProgress = true;
+        alert("A battle with a cell creature begins!");
+        // You can simulate battles here with a choice of biology-based actions
+    }
+}
+</script>
 
 </body>
 </html>
