@@ -182,6 +182,8 @@
     let keys = 0;
     let dungeonLevel = 1;
 
+    let playerTurn = true;  // Keeps track of whether it's the player's turn
+
     const actionCosts = {
         Attack: 30,
         Defend: 20,
@@ -217,12 +219,14 @@
         const healButton = document.getElementById("healButton");
 
         // Disable attack, defend, heal based on energy
-        attackButton.disabled = energy < actionCosts.Attack;
-        defendButton.disabled = energy < actionCosts.Defend;
-        healButton.disabled = energy < actionCosts.Heal;
+        attackButton.disabled = energy < actionCosts.Attack || !playerTurn;
+        defendButton.disabled = energy < actionCosts.Defend || !playerTurn;
+        healButton.disabled = energy < actionCosts.Heal || !playerTurn;
     }
 
     function performAction(action) {
+        if (!playerTurn) return;  // If it's not the player's turn, do nothing
+
         const resultMessage = document.createElement("div");
         resultMessage.classList.add("result");
 
@@ -252,32 +256,22 @@
 
         setTimeout(() => resultMessage.remove(), 2000);
 
-        if (monsterHealth <= 0) {
-            keys++;
-            dungeonLevel++;
-            document.getElementById("keyMessage").innerText = `You defeated the monster and earned a key! Keys: ${keys}`;
-
-            if (keys >= 3) {
-                alert("Congratulations! You've escaped the dungeon!");
-                resetGame();
-            } else {
-                startNewRoom();
-            }
-        } else {
-            monsterTurn();
-        }
+        // Disable player input and start monster's turn
+        playerTurn = false;
+        setTimeout(monsterTurn, 1500);  // Wait before the virus attacks back
     }
 
     function monsterTurn() {
-        setTimeout(() => {
-            const damage = Math.floor(Math.random() * 20) + 10;
-            health -= damage;
-            updateHealthBar();
+        const damage = Math.floor(Math.random() * 20) + 10;
+        health -= damage;
+        updateHealthBar();
 
-            if (health > 0) {
-                askQuestion();
-            }
-        }, 1000);
+        if (health > 0) {
+            // Enable player action again after virus attacks
+            playerTurn = true;
+            updateButtons();
+            askQuestion();
+        }
     }
 
     function startNewRoom() {
