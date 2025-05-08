@@ -3,42 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BioQuest: Cell Explorer</title>
+    <title>BioDungeon Escape</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-
+    
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            background: #e5f2f9;
+            background: #1b1b1b;
             margin: 0;
             padding: 0;
-            color: #3d3d3d;
-            text-align: center;
+            color: #fff;
         }
 
         header {
-            background: #2c3e50;
-            color: white;
-            padding: 40px 20px;
-            font-size: 36px;
-            text-align: center;
-            border-bottom: 3px solid #ffffff;
+            background: #222;
+            color: #f1f1f1;
+            padding: 30px 20px;
+            font-size: 30px;
             font-family: 'Montserrat', sans-serif;
+            text-align: center;
             letter-spacing: 1px;
         }
 
         #gameContainer {
-            padding: 30px;
+            padding: 20px;
             max-width: 900px;
             margin: 0 auto;
             text-align: center;
         }
 
         #storyText {
-            font-size: 22px;
-            margin-bottom: 30px;
-            color: #3d3d3d;
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #e5e5e5;
             line-height: 1.6;
         }
 
@@ -76,30 +74,8 @@
         }
 
         #battleContainer {
+            margin-top: 30px;
             display: block;
-        }
-
-        #questionContainer {
-            display: none;
-            margin-top: 20px;
-        }
-
-        #inventoryContainer {
-            margin-top: 40px;
-            display: none;
-        }
-
-        .barFill {
-            height: 100%;
-            border-radius: 10px;
-        }
-
-        .healthFill {
-            background: #f44336;
-        }
-
-        .energyFill {
-            background: #57c0d7;
         }
 
         #healthBar {
@@ -116,6 +92,19 @@
             background: #f9e555;
             border-radius: 10px;
             margin: 20px 0;
+        }
+
+        .barFill {
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .healthFill {
+            background: #f44336;
+        }
+
+        .energyFill {
+            background: #57c0d7;
         }
 
         .result {
@@ -147,36 +136,29 @@
             cursor: not-allowed !important;
         }
 
-        .energy-cost {
-            font-size: 14px;
-            color: #f9e555;
+        #keyMessage {
+            font-size: 22px;
+            color: #ffdd57;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
-<header>BioQuest: Cell Explorer</header>
+<header>BioDungeon Escape</header>
 
 <!-- Game Container -->
 <div id="gameContainer">
+    <p id="storyText">You awaken in a dark dungeon. You must escape by defeating monsters and solving biology-related questions. Will you make it out alive?</p>
+
     <div id="battleContainer">
-        <p id="battleMessage">A rogue virus appears! Time to protect the mitochondria!</p>
+        <p id="battleMessage">A wild monster blocks your path!</p>
         
-        <!-- Battle Actions -->
-        <div class="button-container">
-            <button class="button" id="attackButton" onclick="performAction('Attack')">
-                Attack with Enzyme <span class="energy-cost">-30 Energy</span>
-            </button>
-            <button class="button" id="defendButton" onclick="performAction('Defend')">
-                Defend with Cell Membrane <span class="energy-cost">-20 Energy</span>
-            </button>
-            <button class="button" id="healButton" onclick="performAction('Heal')">
-                Repair DNA <span class="energy-cost">-40 Energy</span>
-            </button>
-        </div>
+        <button class="button" id="attackButton" onclick="performAction('Attack')">Attack with Enzyme</button>
+        <button class="button" id="defendButton" onclick="performAction('Defend')">Defend with Membrane</button>
+        <button class="button" id="healButton" onclick="performAction('Heal')">Repair DNA</button>
     </div>
 
-    <!-- Health and Energy Bars -->
     <div id="healthBar">
         <div id="healthFill" class="barFill healthFill" style="width: 100%"></div>
     </div>
@@ -184,175 +166,165 @@
         <div id="energyFill" class="barFill energyFill" style="width: 100%"></div>
     </div>
 
-    <!-- Result Message -->
-    <div id="resultMessage" class="result"></div>
-    <div id="questionContainer" class="result"></div>
+    <div id="keyMessage"></div>
+
+    <div id="questionContainer" style="display:none;">
+        <p id="questionText">What is the powerhouse of the cell?</p>
+        <input type="text" id="answerInput" placeholder="Your answer">
+        <button class="button" onclick="checkAnswer()">Submit Answer</button>
+    </div>
 </div>
 
 <script>
-// Variables for story progression, health, energy, and battle mechanics
-let health = 100;
-let energy = 100;
-let virusHealth = 100;
+    let health = 100;
+    let energy = 100;
+    let monsterHealth = 100;
+    let keys = 0;
+    let dungeonLevel = 1;
 
-// Energy cost for actions
-const actionCosts = {
-    Attack: 30,
-    Defend: 20,
-    Heal: 40
-};
+    const actionCosts = {
+        Attack: 30,
+        Defend: 20,
+        Heal: 40
+    };
 
-// Example biology-related questions
-const questions = [
-    { question: "What is the powerhouse of the cell?", answer: "mitochondria" },
-    { question: "What molecule carries genetic information?", answer: "DNA" },
-    { question: "What organelle is responsible for protein synthesis?", answer: "ribosome" },
-    { question: "What type of cell division results in two identical cells?", answer: "mitosis" }
-];
+    const questions = [
+        { question: "What is the powerhouse of the cell?", answer: "mitochondria" },
+        { question: "What molecule carries genetic information?", answer: "DNA" },
+        { question: "What organelle is responsible for protein synthesis?", answer: "ribosome" },
+        { question: "What type of cell division results in two identical cells?", answer: "mitosis" }
+    ];
 
-// Update energy and health bars
-function updateHealthBar() {
-    document.getElementById("healthFill").style.width = `${health}%`;
-    if (health <= 0) {
-        alert("You lost the battle! Try again.");
-        resetGame();
-    }
-}
-
-function updateEnergyBar() {
-    document.getElementById("energyFill").style.width = `${energy}%`;
-    if (energy <= 0) {
-        alert("You ran out of energy! Game over.");
-        resetGame();
-    }
-}
-
-// Disable buttons based on energy
-function updateButtons() {
-    // Attack Button
-    const attackButton = document.getElementById("attackButton");
-    if (energy < actionCosts.Attack) {
-        attackButton.classList.add("disabled");
-        attackButton.disabled = true;
-    } else {
-        attackButton.classList.remove("disabled");
-        attackButton.disabled = false;
-    }
-
-    // Defend Button
-    const defendButton = document.getElementById("defendButton");
-    if (energy < actionCosts.Defend) {
-        defendButton.classList.add("disabled");
-        defendButton.disabled = true;
-    } else {
-        defendButton.classList.remove("disabled");
-        defendButton.disabled = false;
-    }
-
-    // Heal Button
-    const healButton = document.getElementById("healButton");
-    if (energy < actionCosts.Heal) {
-        healButton.classList.add("disabled");
-        healButton.disabled = true;
-    } else {
-        healButton.classList.remove("disabled");
-        healButton.disabled = false;
-    }
-}
-
-// Perform Battle Actions
-function performAction(action) {
-    const resultMessage = document.getElementById("resultMessage");
-    
-    if (action === "Attack" && energy >= actionCosts.Attack) {
-        energy -= actionCosts.Attack;
-        virusHealth -= 25;
-        resultMessage.classList.add("correct");
-        resultMessage.innerHTML = "You attacked the virus!";
-    } else if (action === "Defend" && energy >= actionCosts.Defend) {
-        energy -= actionCosts.Defend;
-        resultMessage.classList.add("correct");
-        resultMessage.innerHTML = "You defended with the cell membrane!";
-    } else if (action === "Heal" && energy >= actionCosts.Heal) {
-        energy -= actionCosts.Heal;
-        health += 10;
-        resultMessage.classList.add("correct");
-        resultMessage.innerHTML = "You repaired the DNA and restored some health!";
-    } else {
-        resultMessage.classList.add("incorrect");
-        resultMessage.innerHTML = "Not enough energy for this action!";
-    }
-    
-    resultMessage.style.display = "block";
-    updateEnergyBar();
-    updateHealthBar();
-    updateButtons();
-
-    // Virus counterattack
-    setTimeout(() => {
-        const damage = Math.floor(Math.random() * 20) + 10; // Virus attack between 10 to 30 damage
-        health -= damage;
-        updateHealthBar();
+    function updateHealthBar() {
+        document.getElementById("healthFill").style.width = `${health}%`;
         if (health <= 0) {
-            alert("You lost the battle! Try again.");
+            alert("You have been defeated! Game over.");
             resetGame();
-        } else {
-            askQuestion();
         }
-    }, 1000);
-
-    // Virus defeat condition
-    if (virusHealth <= 0) {
-        alert("You defeated the virus!");
-        resetGame();
     }
 
-    // Hide result message after 2 seconds
-    setTimeout(() => {
-        resultMessage.style.display = "none";
-    }, 2000);
-}
-
-// Ask biology question to gain energy
-function askQuestion() {
-    const questionData = questions[Math.floor(Math.random() * questions.length)];
-    const questionContainer = document.getElementById("questionContainer");
-
-    questionContainer.innerHTML = `<p>${questionData.question}</p>
-        <input type="text" id="answerInput" placeholder="Your answer" />
-        <button class="button" onclick="checkAnswer('${questionData.answer}')">Submit Answer</button>`;
-
-    questionContainer.style.display = "block";
-}
-
-// Check if the answer is correct
-function checkAnswer(correctAnswer) {
-    const answerInput = document.getElementById("answerInput").value.toLowerCase();
-    const questionContainer = document.getElementById("questionContainer");
-
-    if (answerInput === correctAnswer.toLowerCase()) {
-        energy += 20; // Reward energy for correct answer
-        alert("Correct answer! You gained 20 energy.");
-    } else {
-        energy -= 10; // Penalty for incorrect answer
-        alert("Incorrect answer! You lost 10 energy.");
+    function updateEnergyBar() {
+        document.getElementById("energyFill").style.width = `${energy}%`;
+        if (energy <= 0) {
+            alert("You have run out of energy! Game over.");
+            resetGame();
+        }
     }
 
-    updateEnergyBar();
-    updateButtons();
-    questionContainer.style.display = "none";
-}
+    function updateButtons() {
+        const attackButton = document.getElementById("attackButton");
+        const defendButton = document.getElementById("defendButton");
+        const healButton = document.getElementById("healButton");
 
-// Reset the game after a battle
-function resetGame() {
-    health = 100;
-    energy = 100;
-    virusHealth = 100;
-    updateEnergyBar();
-    updateHealthBar();
-    updateButtons();
-}
+        // Disable attack, defend, heal based on energy
+        attackButton.disabled = energy < actionCosts.Attack;
+        defendButton.disabled = energy < actionCosts.Defend;
+        healButton.disabled = energy < actionCosts.Heal;
+    }
 
+    function performAction(action) {
+        const resultMessage = document.createElement("div");
+        resultMessage.classList.add("result");
+
+        if (action === "Attack" && energy >= actionCosts.Attack) {
+            energy -= actionCosts.Attack;
+            monsterHealth -= 30;
+            resultMessage.classList.add("correct");
+            resultMessage.innerHTML = "You dealt damage to the monster!";
+        } else if (action === "Defend" && energy >= actionCosts.Defend) {
+            energy -= actionCosts.Defend;
+            resultMessage.classList.add("correct");
+            resultMessage.innerHTML = "You defended against the monster's attack!";
+        } else if (action === "Heal" && energy >= actionCosts.Heal) {
+            energy -= actionCosts.Heal;
+            health += 10;
+            resultMessage.classList.add("correct");
+            resultMessage.innerHTML = "You repaired your DNA and restored health!";
+        } else {
+            resultMessage.classList.add("incorrect");
+            resultMessage.innerHTML = "Not enough energy to perform this action!";
+        }
+
+        document.body.append(resultMessage);
+        updateEnergyBar();
+        updateHealthBar();
+        updateButtons();
+
+        setTimeout(() => resultMessage.remove(), 2000);
+
+        if (monsterHealth <= 0) {
+            keys++;
+            dungeonLevel++;
+            document.getElementById("keyMessage").innerText = `You defeated the monster and earned a key! Keys: ${keys}`;
+
+            if (keys >= 3) {
+                alert("Congratulations! You've escaped the dungeon!");
+                resetGame();
+            } else {
+                startNewRoom();
+            }
+        } else {
+            monsterTurn();
+        }
+    }
+
+    function monsterTurn() {
+        setTimeout(() => {
+            const damage = Math.floor(Math.random() * 20) + 10;
+            health -= damage;
+            updateHealthBar();
+
+            if (health > 0) {
+                askQuestion();
+            }
+        }, 1000);
+    }
+
+    function startNewRoom() {
+        monsterHealth = 100;
+        document.getElementById("battleMessage").innerText = `A wild monster blocks your path in room ${dungeonLevel}!`;
+        document.getElementById("keyMessage").innerText = "";
+    }
+
+    function askQuestion() {
+        const questionData = questions[Math.floor(Math.random() * questions.length)];
+        const questionContainer = document.getElementById("questionContainer");
+        document.getElementById("questionText").innerText = questionData.question;
+        questionContainer.style.display = "block";
+    }
+
+    function checkAnswer() {
+        const answerInput = document.getElementById("answerInput").value.toLowerCase();
+        const correctAnswer = questions[Math.floor(Math.random() * questions.length)].answer.toLowerCase();
+
+        if (answerInput === correctAnswer) {
+            energy += 20;
+            alert("Correct answer! You gained 20 energy.");
+        } else {
+            energy -= 10;
+            alert("Incorrect answer! You lost 10 energy.");
+        }
+
+        updateEnergyBar();
+        updateButtons();
+        document.getElementById("questionContainer").style.display = "none";
+    }
+
+    function resetGame() {
+        health = 100;
+        energy = 100;
+        monsterHealth = 100;
+        keys = 0;
+        dungeonLevel = 1;
+        updateEnergyBar();
+        updateHealthBar();
+        updateButtons();
+        document.getElementById("keyMessage").innerText = "";
+        document.getElementById("storyText").innerText = "You awaken in a dark dungeon. You must escape by defeating monsters and solving biology-related questions. Will you make it out alive?";
+    }
+
+    // Initialize the game
+    startNewRoom();
 </script>
 
 </body>
