@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BioDungeon Escape</title>
 
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 
     <style>
@@ -317,8 +316,91 @@
 </div>
 
 <script>
-// Insert the JavaScript you already have for game logic, transitions, and animation
+    let energy = 0;
+    let health = 100;
+    let virusHealth = 100;
+    let actionInProgress = false;
 
+    // Switch between screens
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(screen => screen.style.display = 'none');
+        document.getElementById(screenId).style.display = 'block';
+    }
+
+    function startAdventure() {
+        showScreen('monsterScreen');
+    }
+
+    function startQuestions() {
+        showScreen('questionScreen');
+    }
+
+    function checkAnswer(answer) {
+        // For now, we just consider 'Mitochondria' as the correct answer
+        const correctAnswer = 'mitochondria';
+        if (answer === correctAnswer) {
+            showResult('Correct!', 'correct');
+            energy += 20;
+        } else {
+            showResult('Incorrect!', 'incorrect');
+        }
+
+        // Reset for next question
+        setTimeout(() => {
+            showScreen('actionScreen');
+            updateBars();
+        }, 1500); // Show the result for 1.5s before transitioning to action screen
+    }
+
+    function showResult(message, type) {
+        const resultElement = document.getElementById('questionResult');
+        resultElement.textContent = message;
+        resultElement.classList.add(type, 'flash');
+        resultElement.style.display = 'block';
+    }
+
+    function updateBars() {
+        document.getElementById('energyText').textContent = `${energy}/100`;
+        document.getElementById('energyFill').style.width = `${(energy / 100) * 100}%`;
+        document.getElementById('healthText').textContent = `${health}/100`;
+        document.getElementById('virusHealthText').textContent = `${virusHealth}/100`;
+        document.getElementById('virusHealthFill').style.width = `${(virusHealth / 100) * 100}%`;
+    }
+
+    function performAction(action) {
+        if (actionInProgress || energy <= 0) return; // Prevent actions if one is already in progress or energy is 0
+
+        actionInProgress = true;
+        energy -= 10; // Each action costs 10 energy
+
+        // Action outcome
+        if (action === 'Attack') {
+            virusHealth -= 20; // Deal damage to the monster
+        } else if (action === 'Defend') {
+            health -= 10; // Defend
+        } else if (action === 'Heal') {
+            health += 15; // Heal
+        }
+
+        // Update bars and handle the monster's attack after your action
+        updateBars();
+
+        // The monster attacks after your action
+        setTimeout(() => {
+            monsterAttack();
+        }, 1000); // Delay for monster attack
+    }
+
+    function monsterAttack() {
+        // Monster attack logic (deal damage to player)
+        health -= 15;
+
+        // Update health bar after attack
+        updateBars();
+
+        // Allow player to take another action
+        actionInProgress = false;
+    }
 </script>
 
 </body>
