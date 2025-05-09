@@ -281,102 +281,85 @@
     }
 
     function askQuestion() {
-        const questionData = questions[Math.floor(Math.random() * questions.length)];
-        document.getElementById("questionText").innerText = questionData.question;
+        let question = questions[questionsAnswered];
+        document.getElementById("questionText").innerText = question.question;
+        showScreen("questionScreen");
     }
 
     function checkAnswer() {
-        const answerInput = document.getElementById("answerInput").value.toLowerCase();
-        const correctAnswer = questions[Math.floor(Math.random() * questions.length)].answer.toLowerCase();
+        const userAnswer = document.getElementById("answerInput").value.trim().toLowerCase();
+        const correctAnswer = questions[questionsAnswered].answer;
         const resultDiv = document.getElementById("questionResult");
 
-        if (answerInput === correctAnswer) {
-            energy = Math.min(energy + 20, 100); // Don't let energy go above 100
-            resultDiv.innerHTML = "<span style='color: green;'>Correct answer! You gained 20 energy.</span>";
-            resultDiv.classList.add("correct", "flash");
+        if (userAnswer === correctAnswer) {
+            energy = Math.min(energy + 30, 100);
+            resultDiv.innerText = "Correct! Energy gained!";
+            resultDiv.className = "result correct flash";
         } else {
-            resultDiv.innerHTML = "<span style='color: red;'>Incorrect answer! You didn’t gain any energy.</span>";
-            resultDiv.classList.add("incorrect", "flash");
+            resultDiv.innerText = "Incorrect. Try again!";
+            resultDiv.className = "result incorrect flash";
         }
 
-        setTimeout(() => {
-            resultDiv.classList.remove("flash");  // Remove flash animation
-            document.getElementById("answerInput").value = "";  // Clear the input field
-        }, 2000);
-
-        updateEnergyBar();
-        questionsAnswered += 1;
-
-        if (questionsAnswered >= 3) {
-            showScreen('actionScreen');
-            questionsAnswered = 0;
+        questionsAnswered++;
+        if (questionsAnswered < questions.length) {
+            setTimeout(() => {
+                resultDiv.style.display = 'none';
+                document.getElementById("answerInput").value = '';
+                showScreen("actionScreen");
+                updateEnergyBar();
+            }, 2000);
         } else {
-            askQuestion();
+            showScreen("actionScreen");
         }
     }
 
-    function performAction(action) {
-        if (energy < actionCosts[action]) {
-            alert("Not enough energy to perform this action!");
-            return;
+    function performAction(actionType) {
+        if (energy >= actionCosts[actionType]) {
+            energy -= actionCosts[actionType];
+            updateEnergyBar();
+            if (actionType === 'Attack') {
+                monsterHealth -= 25;
+            } else if (actionType === 'Defend') {
+                health += 10;
+                if (health > 100) health = 100;
+            } else if (actionType === 'Heal') {
+                health += 20;
+                if (health > 100) health = 100;
+            }
+
+            updateHealthBar();
+            updateVirusHealthBar();
+            performMonsterAttack();
         }
-
-        if (action === "Attack") {
-            energy -= actionCosts.Attack;
-            monsterHealth -= 30;
-            alert("You dealt damage to the monster!");
-        } else if (action === "Defend") {
-            energy -= actionCosts.Defend;
-            alert("You defended against the monster's attack!");
-        } else if (action === "Heal") {
-            energy -= actionCosts.Heal;
-            health += 10;
-            alert("You repaired your DNA and restored health!");
-        }
-
-        updateHealthBar();
-        updateEnergyBar();
-        updateVirusHealthBar();
-
-        setTimeout(performMonsterAttack, 1500);
     }
 
     function performMonsterAttack() {
-        if (energy > 0) {
-            // Monster attacks after player runs out of energy
-            const damage = Math.floor(Math.random() * 20) + 10;
-            health -= damage;
-            alert(`The monster attacked you for ${damage} damage!`);
-            updateHealthBar();
-            setTimeout(askQuestion, 2000);
-        }
-    }
-
-    function startNewRoom() {
-        monsterHealth = 100;
-        document.getElementById("battleMessage").innerText = "A new monster appears in the next room!";
-        updateVirusHealthBar();
-        showScreen('questionScreen');
+        const damage = Math.floor(Math.random() * 20) + 5;
+        health -= damage;
+        updateHealthBar();
+        setTimeout(() => {
+            if (health > 0) askQuestion();
+        }, 2000);
     }
 
     function startGame() {
-        showScreen('questionScreen');
+        showScreen("actionScreen");
         askQuestion();
     }
 
-    function resetGame() {
-        health = 100;
-        energy = 0;
-        monsterHealth = 100;
+    function startNewRoom() {
         questionsAnswered = 0;
+        energy = 0;
+        health = 100;
+        monsterHealth = 100;
         updateHealthBar();
-        updateEnergyBar();
         updateVirusHealthBar();
-        showScreen('storyScreen');
+        updateEnergyBar();
+        askQuestion();
     }
 
-    // Start the game
-    showScreen('storyScreen');
+    // Initialize game
+    startGame();
 </script>
 
 </body>
