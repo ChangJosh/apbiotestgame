@@ -264,9 +264,9 @@
         </div>
 
         <div id="actionButtons">
-            <button class="button" id="attackButton" onclick="performAction('Attack')">Attack</button>
-            <button class="button" id="defendButton" onclick="performAction('Defend')">Defend</button>
-            <button class="button" id="healButton" onclick="performAction('Heal')">Heal</button>
+            <button class="button" id="attackButton" onclick="performAction('Attack')" disabled>Attack</button>
+            <button class="button" id="defendButton" onclick="performAction('Defend')" disabled>Defend</button>
+            <button class="button" id="healButton" onclick="performAction('Heal')" disabled>Heal</button>
         </div>
     </div>
 </div>
@@ -285,60 +285,60 @@
 
     const questions = [
         {
-            question: 'What is the powerhouse of the cell?',
-            options: ['Mitochondria', 'Nucleus', 'Chloroplast', 'Ribosome'],
-            answer: 'mitochondria'
+            question: "What is the powerhouse of the cell?",
+            options: ["Mitochondria", "Nucleus", "Chloroplast", "Ribosome"],
+            correctAnswer: "Mitochondria"
         },
         {
-            question: 'Which organelle is responsible for photosynthesis?',
-            options: ['Mitochondria', 'Nucleus', 'Chloroplast', 'Ribosome'],
-            answer: 'chloroplast'
+            question: "What part of the cell contains genetic material?",
+            options: ["Mitochondria", "Nucleus", "Chloroplast", "Ribosome"],
+            correctAnswer: "Nucleus"
         },
         {
-            question: 'What part of the cell contains the DNA?',
-            options: ['Mitochondria', 'Nucleus', 'Chloroplast', 'Ribosome'],
-            answer: 'nucleus'
+            question: "Which of these is responsible for photosynthesis?",
+            options: ["Mitochondria", "Nucleus", "Chloroplast", "Ribosome"],
+            correctAnswer: "Chloroplast"
         }
     ];
 
+    // Start Adventure
+    function startAdventure() {
+        showScreen('monsterScreen');
+    }
+
+    // Start answering questions
+    function startQuestions() {
+        questionsAnswered = 0;
+        showScreen('questionScreen');
+        askQuestion();
+    }
+
+    // Show different screens
     function showScreen(screenId) {
         document.querySelectorAll('.screen').forEach(screen => screen.style.display = 'none');
         document.getElementById(screenId).style.display = 'block';
     }
 
-    function startAdventure() {
-        showScreen("monsterScreen");
-    }
-
-    function startQuestions() {
-        showScreen("questionScreen");
-        askQuestion();
-    }
-
+    // Ask the current question
     function askQuestion() {
-        let question = questions[questionsAnswered];
-        document.getElementById("questionText").innerText = question.question;
-        const options = question.options;
-
-        const optionsContainer = document.getElementById('optionsContainer');
-        optionsContainer.innerHTML = '';
-        options.forEach(option => {
-            const optionButton = document.createElement('button');
-            optionButton.className = 'option-button';
-            optionButton.innerText = option;
-            optionButton.onclick = () => checkAnswer(option.toLowerCase());
-            optionsContainer.appendChild(optionButton);
-        });
+        if (questionsAnswered < questions.length) {
+            const currentQuestion = questions[questionsAnswered];
+            document.getElementById('questionText').innerText = currentQuestion.question;
+            document.getElementById('optionsContainer').innerHTML = currentQuestion.options.map(option => 
+                `<button class="option-button" onclick="checkAnswer('${option}')">${option}</button>`
+            ).join('');
+        }
     }
 
+    // Check if the answer is correct
     function checkAnswer(userAnswer) {
-        const correctAnswer = questions[questionsAnswered].answer;
+        const correctAnswer = questions[questionsAnswered].correctAnswer;
         const resultDiv = document.getElementById("questionResult");
 
         if (userAnswer === correctAnswer) {
             resultDiv.innerText = "Correct!";
             resultDiv.classList.add("correct", "flash");
-            energy += 30; // Increase energy for correct answer
+            energy = Math.min(energy + 30, 100); // Increase energy for correct answer (max 100)
         } else {
             resultDiv.innerText = "Incorrect!";
             resultDiv.classList.add("incorrect", "flash");
@@ -347,15 +347,26 @@
         setTimeout(() => {
             resultDiv.classList.remove("correct", "incorrect", "flash");
             questionsAnswered++;
-            if (questionsAnswered < questions.length) {
-                askQuestion();
-            } else {
+
+            // Enable action buttons once questions are answered
+            if (questionsAnswered >= questions.length) {
                 showScreen("actionScreen");
+                enableActionButtons();
                 updateBars();
+            } else {
+                askQuestion();
             }
         }, 1000);
     }
 
+    // Enable action buttons based on energy
+    function enableActionButtons() {
+        document.getElementById("attackButton").disabled = (energy < actionCosts.Attack);
+        document.getElementById("defendButton").disabled = (energy < actionCosts.Defend);
+        document.getElementById("healButton").disabled = (energy < actionCosts.Heal);
+    }
+
+    // Perform an action
     function performAction(action) {
         if (energy < actionCosts[action]) return; // Don't allow if not enough energy
 
@@ -381,6 +392,7 @@
         }
     }
 
+    // Monster attack
     function performMonsterAttack() {
         const damage = Math.floor(Math.random() * 20) + 10;
         health -= damage;
@@ -397,6 +409,7 @@
         }, 2000);
     }
 
+    // Update health, energy, and virus health bars
     function updateBars() {
         // Update health bar
         const healthPercentage = (health / 100) * 100;
@@ -414,8 +427,9 @@
         document.getElementById("virusHealthText").innerText = `${monsterHealth}/100`;
     }
 
-    // Start the game with the first screen
+    // Start the game with the story screen
     showScreen("storyScreen");
 </script>
+
 </body>
 </html>
