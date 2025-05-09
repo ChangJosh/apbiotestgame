@@ -303,21 +303,17 @@
         screens.forEach(screen => {
             screen.style.display = 'none';
         });
-        document.getElementById(screenId).style.display = 'flex';
-    }
-
-    function updateHealthBar() {
-        document.getElementById("healthFill").style.width = `${health}%`;
-        document.getElementById("healthText").innerText = `${health}/100`;
-        if (health <= 0) {
-            alert("You have been defeated! Game over.");
-            resetGame();
-        }
+        document.getElementById(screenId).style.display = 'block';
     }
 
     function updateEnergyBar() {
         document.getElementById("energyFill").style.width = `${energy}%`;
         document.getElementById("energyText").innerText = `${energy}/100`;
+    }
+
+    function updateHealthBar() {
+        document.getElementById("healthFill").style.width = `${health}%`;
+        document.getElementById("healthText").innerText = `${health}/100`;
     }
 
     function updateVirusHealthBar() {
@@ -415,5 +411,6 @@
         askQuestion();
     }
 </script>
+
 </body>
 </html>
