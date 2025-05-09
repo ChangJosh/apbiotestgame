@@ -67,7 +67,6 @@
             font-weight: 500;
         }
 
-        /* Hover and active states for buttons */
         .button:hover {
             background: #45a1b5;
             box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2);
@@ -203,6 +202,46 @@
             outline: none;
         }
 
+        /* Monster Animation */
+        #monster {
+            width: 200px;
+            height: 200px;
+            margin-top: 20px;
+        }
+
+        #monster-appear {
+            display: none;
+            width: 200px;
+            height: 200px;
+            margin-top: 20px;
+            animation: monsterAppear 2s forwards;
+        }
+
+        @keyframes monsterAppear {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Video for monster animation */
+        .monster-video {
+            width: 200px;
+            height: 200px;
+        }
+
+        .monster-video#monster-appear {
+            display: block;
+        }
+
+        .monster-video#monster-idle {
+            display: none;
+        }
+
     </style>
 </head>
 <body>
@@ -220,6 +259,11 @@
     <!-- Monster Encounter Screen -->
     <div id="monsterScreen" class="screen">
         <h2>A wild monster appears!</h2>
+        <div id="monster-appear" class="monster-video">
+            <video id="monster-appear-video" class="monster-video" autoplay>
+                <source src="monster-appear.mp4" type="video/mp4">
+            </video>
+        </div>
         <p id="monsterText">To defeat the monster, you need to answer questions and use your abilities wisely. Good luck!</p>
         <button class="button" onclick="startQuestions()">Accept Quest</button>
     </div>
@@ -236,199 +280,45 @@
         <div id="questionResult" class="result"></div>
     </div>
 
-    <!-- Action Screen -->
+    <!-- Action Screen (Fight and Use Actions) -->
     <div id="actionScreen" class="screen">
-        <p id="battleMessage">Prepare for the battle with the monster!</p>
+        <h2>Choose Your Action</h2>
+        <div id="monster-idle" class="monster-video">
+            <video id="monster-idle-video" class="monster-video" autoplay loop>
+                <source src="monster-idle.mp4" type="video/mp4">
+            </video>
+        </div>
+        <div id="bars">
+            <div class="barContainer">
+                <div id="healthFill" class="barFill healthFill" style="width: 100%"></div>
+            </div>
+            <div class="barText">
+                <span>Your Health: <span id="healthText">100/100</span></span>
+            </div>
+            <div class="barContainer">
+                <div id="energyFill" class="barFill energyFill" style="width: 0%"></div>
+            </div>
+            <div class="barText">
+                <span>Your Energy: <span id="energyText">0/100</span></span>
+            </div>
+            <div class="barContainer">
+                <div id="virusHealthFill" class="barFill virusHealthFill" style="width: 100%"></div>
+            </div>
+            <div class="barText">
+                <span>Monster Health: <span id="virusHealthText">100/100</span></span>
+            </div>
+        </div>
 
-        <!-- Health & Energy Bars -->
-        <div id="healthBar" class="barContainer">
-            <div id="healthFill" class="barFill healthFill" style="width: 100%"></div>
-        </div>
-        <div class="barText">
-            <span>Your Health: <span id="healthText">100/100</span></span>
-        </div>
-
-        <div id="energyBar" class="barContainer">
-            <div id="energyFill" class="barFill energyFill" style="width: 0%"></div>
-        </div>
-        <div class="barText">
-            <span>Your Energy: <span id="energyText">0/100</span></span>
-        </div>
-
-        <!-- Virus Health -->
-        <div id="virusHealthBar" class="barContainer">
-            <div id="virusHealthFill" class="barFill virusHealthFill" style="width: 100%"></div>
-        </div>
-        <div class="barText">
-            <span>Monster Health: <span id="virusHealthText">100/100</span></span>
-        </div>
-
-        <div id="actionButtons">
-            <button class="button" id="attackButton" onclick="performAction('Attack')" disabled>Attack</button>
-            <button class="button" id="defendButton" onclick="performAction('Defend')" disabled>Defend</button>
-            <button class="button" id="healButton" onclick="performAction('Heal')" disabled>Heal</button>
-        </div>
+        <!-- Action Buttons -->
+        <button id="attackButton" class="button" onclick="performAction('Attack')">Attack</button>
+        <button id="defendButton" class="button" onclick="performAction('Defend')">Defend</button>
+        <button id="healButton" class="button" onclick="performAction('Heal')">Heal</button>
     </div>
 </div>
 
 <script>
-    let health = 100;
-    let energy = 0;
-    let monsterHealth = 100;
-    let questionsAnswered = 0;
+// Insert the JavaScript you already have for game logic, transitions, and animation
 
-    const actionCosts = {
-        Attack: 30,
-        Defend: 20,
-        Heal: 20
-    };
-
-    const questions = [
-        {
-            question: "What is the powerhouse of the cell?",
-            options: ["Mitochondria", "Nucleus", "Chloroplast", "Ribosome"],
-            correctAnswer: "Mitochondria"
-        },
-        {
-            question: "What part of the cell contains genetic material?",
-            options: ["Mitochondria", "Nucleus", "Chloroplast", "Ribosome"],
-            correctAnswer: "Nucleus"
-        },
-        {
-            question: "Which of these is responsible for photosynthesis?",
-            options: ["Mitochondria", "Nucleus", "Chloroplast", "Ribosome"],
-            correctAnswer: "Chloroplast"
-        }
-    ];
-
-    // Start Adventure
-    function startAdventure() {
-        showScreen('monsterScreen');
-    }
-
-    // Start answering questions
-    function startQuestions() {
-        questionsAnswered = 0;
-        showScreen('questionScreen');
-        askQuestion();
-    }
-
-    // Show different screens
-    function showScreen(screenId) {
-        document.querySelectorAll('.screen').forEach(screen => screen.style.display = 'none');
-        document.getElementById(screenId).style.display = 'block';
-    }
-
-    // Ask the current question
-    function askQuestion() {
-        if (questionsAnswered < questions.length) {
-            const currentQuestion = questions[questionsAnswered];
-            document.getElementById('questionText').innerText = currentQuestion.question;
-            document.getElementById('optionsContainer').innerHTML = currentQuestion.options.map(option => 
-                `<button class="option-button" onclick="checkAnswer('${option}')">${option}</button>`
-            ).join('');
-        }
-    }
-
-    // Check if the answer is correct
-    function checkAnswer(userAnswer) {
-        const correctAnswer = questions[questionsAnswered].correctAnswer;
-        const resultDiv = document.getElementById("questionResult");
-
-        if (userAnswer === correctAnswer) {
-            resultDiv.innerText = "Correct!";
-            resultDiv.classList.add("correct", "flash");
-            energy = Math.min(energy + 30, 100); // Increase energy for correct answer (max 100)
-        } else {
-            resultDiv.innerText = "Incorrect!";
-            resultDiv.classList.add("incorrect", "flash");
-        }
-
-        setTimeout(() => {
-            resultDiv.classList.remove("correct", "incorrect", "flash");
-            questionsAnswered++;
-
-            // Enable action buttons once questions are answered
-            if (questionsAnswered >= questions.length) {
-                showScreen("actionScreen");
-                enableActionButtons();
-                updateBars();
-            } else {
-                askQuestion();
-            }
-        }, 1000);
-    }
-
-    // Enable action buttons based on energy
-    function enableActionButtons() {
-        document.getElementById("attackButton").disabled = (energy < actionCosts.Attack);
-        document.getElementById("defendButton").disabled = (energy < actionCosts.Defend);
-        document.getElementById("healButton").disabled = (energy < actionCosts.Heal);
-    }
-
-    // Perform an action
-    function performAction(action) {
-        if (energy < actionCosts[action]) return; // Don't allow if not enough energy
-
-        energy -= actionCosts[action];
-        updateBars();
-
-        if (action === 'Attack') {
-            monsterHealth -= Math.floor(Math.random() * 30) + 10;
-        } else if (action === 'Defend') {
-            health -= Math.floor(Math.random() * 5) + 2;
-        } else if (action === 'Heal') {
-            health += 20;
-            if (health > 100) health = 100;
-        }
-
-        updateBars();
-
-        if (monsterHealth <= 0) {
-            alert("You defeated the monster! You win!");
-            showScreen("storyScreen"); // Restart the game after victory
-        } else {
-            performMonsterAttack();
-        }
-    }
-
-    // Monster attack
-    function performMonsterAttack() {
-        const damage = Math.floor(Math.random() * 20) + 10;
-        health -= damage;
-        updateBars();
-
-        setTimeout(() => {
-            if (health <= 0) {
-                alert("You lost the battle. Game Over!");
-                showScreen("storyScreen");
-            } else {
-                showScreen("questionScreen");
-                askQuestion();
-            }
-        }, 2000);
-    }
-
-    // Update health, energy, and virus health bars
-    function updateBars() {
-        // Update health bar
-        const healthPercentage = (health / 100) * 100;
-        document.getElementById("healthFill").style.width = `${healthPercentage}%`;
-        document.getElementById("healthText").innerText = `${health}/100`;
-
-        // Update energy bar
-        const energyPercentage = (energy / 100) * 100;
-        document.getElementById("energyFill").style.width = `${energyPercentage}%`;
-        document.getElementById("energyText").innerText = `${energy}/100`;
-
-        // Update virus health bar
-        const virusHealthPercentage = (monsterHealth / 100) * 100;
-        document.getElementById("virusHealthFill").style.width = `${virusHealthPercentage}%`;
-        document.getElementById("virusHealthText").innerText = `${monsterHealth}/100`;
-    }
-
-    // Start the game with the story screen
-    showScreen("storyScreen");
 </script>
 
 </body>
