@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 
     <style>
+        /* Global Styles */
         body {
             font-family: 'Roboto', sans-serif;
             background: #101010;
@@ -49,6 +50,7 @@
             color: #e5e5e5;
         }
 
+        /* Buttons */
         .button {
             background: #57c0d7;
             color: white;
@@ -82,7 +84,7 @@
             outline: none;
         }
 
-        /* Health and Energy Bars (Roblox Rivals style) */
+        /* Health and Energy Bars */
         .barContainer {
             width: 100%;
             height: 20px;
@@ -112,7 +114,7 @@
             margin-top: 5px;
         }
 
-        /* Answer Question Screen (Prodigy-style) */
+        /* Answer Question Screen */
         #questionScreen input {
             font-size: 20px;
             padding: 10px;
@@ -129,10 +131,6 @@
         #questionScreen input:focus {
             outline: none;
             background: #333;
-        }
-
-        #questionScreen button {
-            margin-top: 20px;
         }
 
         /* Result messages for correct/incorrect answers */
@@ -209,7 +207,6 @@
 <header>BioDungeon Escape</header>
 
 <div id="gameContainer">
-
     <!-- Story Screen -->
     <div id="storyScreen" class="screen">
         <p id="storyText">You awaken in a dark dungeon. To escape, you must solve biology-related puzzles and battle fierce monsters! Get ready for the challenge!</p>
@@ -272,37 +269,29 @@
     const actionCosts = {
         Attack: 30,
         Defend: 20,
-        Heal: 40
+        Heal: 20
     };
 
     const questions = [
         {
-            question: "What is the powerhouse of the cell?",
-            options: ["Mitochondria", "Nucleus", "Chloroplast", "Ribosome"],
-            answer: "mitochondria"
+            question: 'What is the powerhouse of the cell?',
+            options: ['Mitochondria', 'Nucleus', 'Chloroplast', 'Ribosome'],
+            answer: 'mitochondria'
         },
         {
-            question: "What molecule carries genetic information?",
-            options: ["DNA", "RNA", "Protein", "Lipids"],
-            answer: "DNA"
+            question: 'Which organelle is responsible for photosynthesis?',
+            options: ['Mitochondria', 'Nucleus', 'Chloroplast', 'Ribosome'],
+            answer: 'chloroplast'
         },
         {
-            question: "What organelle is responsible for protein synthesis?",
-            options: ["Ribosome", "Golgi Apparatus", "Mitochondria", "Endoplasmic Reticulum"],
-            answer: "ribosome"
-        },
-        {
-            question: "What type of cell division results in two identical cells?",
-            options: ["Mitosis", "Meiosis", "Binary Fission", "Germination"],
-            answer: "mitosis"
+            question: 'What part of the cell contains the DNA?',
+            options: ['Mitochondria', 'Nucleus', 'Chloroplast', 'Ribosome'],
+            answer: 'nucleus'
         }
     ];
 
     function showScreen(screenId) {
-        const screens = document.querySelectorAll('.screen');
-        screens.forEach(screen => {
-            screen.style.display = 'none';
-        });
+        document.querySelectorAll('.screen').forEach(screen => screen.style.display = 'none');
         document.getElementById(screenId).style.display = 'block';
     }
 
