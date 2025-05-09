@@ -125,6 +125,10 @@
             background: #57c0d7;
         }
 
+        .virusHealthFill {
+            background: #FF6347; /* Red color for the virus */
+        }
+
         .barText {
             display: flex;
             justify-content: space-between;
@@ -253,7 +257,7 @@
 
         <!-- Virus Health -->
         <div id="virusHealthBar" class="barContainer">
-            <div id="virusHealthFill" class="barFill energyFill" style="width: 100%"></div>
+            <div id="virusHealthFill" class="barFill virusHealthFill" style="width: 100%"></div>
         </div>
         <div class="barText">
             <span>Monster Health: <span id="virusHealthText">100/100</span></span>
@@ -332,80 +336,86 @@
         const resultDiv = document.getElementById("questionResult");
 
         if (userAnswer === correctAnswer) {
-            energy = Math.min(energy + 30, 100);
-            resultDiv.innerText = "Correct! Energy gained!";
-            resultDiv.className = "result correct flash";
+            resultDiv.innerText = "Correct!";
+            resultDiv.classList.add("correct", "flash");
+            energy += 30; // Increase energy for correct answer
         } else {
-            resultDiv.innerText = "Incorrect. Try again!";
-            resultDiv.className = "result incorrect flash";
+            resultDiv.innerText = "Incorrect!";
+            resultDiv.classList.add("incorrect", "flash");
         }
 
-        questionsAnswered++;
-        resultDiv.style.display = 'block';
-
-        if (questionsAnswered < questions.length) {
-            setTimeout(() => {
-                resultDiv.style.display = 'none';
+        setTimeout(() => {
+            resultDiv.classList.remove("correct", "incorrect", "flash");
+            questionsAnswered++;
+            if (questionsAnswered < questions.length) {
                 askQuestion();
-            }, 2000);
-        } else {
-            showScreen("actionScreen");
-        }
+            } else {
+                showScreen("actionScreen");
+                updateBars();
+            }
+        }, 1000);
     }
 
-    function performAction(actionType) {
-        if (energy >= actionCosts[actionType]) {
-            energy -= actionCosts[actionType];
-            updateEnergyBar();
-            if (actionType === 'Attack') {
-                monsterHealth -= 25;
-            } else if (actionType === 'Defend') {
-                health += 10;
-                if (health > 100) health = 100;
-            } else if (actionType === 'Heal') {
-                health += 20;
-                if (health > 100) health = 100;
-            }
+    function performAction(action) {
+        if (energy < actionCosts[action]) return; // Don't allow if not enough energy
 
-            updateHealthBar();
-            updateVirusHealthBar();
+        energy -= actionCosts[action];
+        updateBars();
+
+        if (action === 'Attack') {
+            monsterHealth -= Math.floor(Math.random() * 30) + 10;
+        } else if (action === 'Defend') {
+            health -= Math.floor(Math.random() * 5) + 2;
+        } else if (action === 'Heal') {
+            health += 20;
+            if (health > 100) health = 100;
+        }
+
+        updateBars();
+
+        if (monsterHealth <= 0) {
+            alert("You defeated the monster! You win!");
+            showScreen("storyScreen"); // Restart the game after victory
+        } else {
             performMonsterAttack();
         }
     }
 
-    function updateEnergyBar() {
-        document.getElementById("energyFill").style.width = `${energy}%`;
-        document.getElementById("energyText").innerText = `${energy}/100`;
-    }
-
-    function updateHealthBar() {
-        document.getElementById("healthFill").style.width = `${health}%`;
-        document.getElementById("healthText").innerText = `${health}/100`;
-    }
-
-    function updateVirusHealthBar() {
-        document.getElementById("virusHealthFill").style.width = `${monsterHealth}%`;
-        document.getElementById("virusHealthText").innerText = `${monsterHealth}/100`;
-    }
-
     function performMonsterAttack() {
-        let damage = Math.floor(Math.random() * 20) + 10;
+        const damage = Math.floor(Math.random() * 20) + 10;
         health -= damage;
-        updateHealthBar();
+        updateBars();
 
         setTimeout(() => {
-            if (health > 0) {
+            if (health <= 0) {
+                alert("You lost the battle. Game Over!");
+                showScreen("storyScreen");
+            } else {
                 showScreen("questionScreen");
                 askQuestion();
-            } else {
-                alert("You lost the battle. Game Over!");
             }
         }, 2000);
     }
 
-    // Start the game by displaying the first screen
+    function updateBars() {
+        // Update health bar
+        const healthPercentage = (health / 100) * 100;
+        document.getElementById("healthFill").style.width = `${healthPercentage}%`;
+        document.getElementById("healthText").innerText = `${health}/100`;
+
+        // Update energy bar
+        const energyPercentage = (energy / 100) * 100;
+        document.getElementById("energyFill").style.width = `${energyPercentage}%`;
+        document.getElementById("energyText").innerText = `${energy}/100`;
+
+        // Update virus health bar
+        const virusHealthPercentage = (monsterHealth / 100) * 100;
+        document.getElementById("virusHealthFill").style.width = `${virusHealthPercentage}%`;
+        document.getElementById("virusHealthText").innerText = `${monsterHealth}/100`;
+    }
+
+    // Start the game with the first screen
     showScreen("storyScreen");
 </script>
-
 </body>
 </html>
