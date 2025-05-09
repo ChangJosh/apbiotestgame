@@ -170,6 +170,38 @@
                 opacity: 0;
             }
         }
+
+        /* Multiple Choice Options */
+        .option-button {
+            background: #4CAF50;
+            color: white;
+            font-size: 18px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 15px;
+            display: inline-block;
+            width: 100%;
+            max-width: 300px;
+            cursor: pointer;
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .option-button:hover {
+            background: #45a1b5;
+            box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .option-button:active {
+            background: #45a1b5;
+            box-shadow: inset 0px 4px 8px rgba(0, 0, 0, 0.2);
+            transform: translateY(2px);
+        }
+
+        .option-button:focus {
+            outline: none;
+        }
     </style>
 </head>
 <body>
@@ -187,8 +219,12 @@
     <!-- Question Screen (Prodigy-style) -->
     <div id="questionScreen" class="screen">
         <p id="questionText">What is the powerhouse of the cell?</p>
-        <input type="text" id="answerInput" placeholder="Your answer">
-        <button class="button" onclick="checkAnswer()">Submit Answer</button>
+        <div id="optionsContainer">
+            <button class="option-button" onclick="checkAnswer('mitochondria')">Mitochondria</button>
+            <button class="option-button" onclick="checkAnswer('nucleus')">Nucleus</button>
+            <button class="option-button" onclick="checkAnswer('chloroplast')">Chloroplast</button>
+            <button class="option-button" onclick="checkAnswer('ribosome')">Ribosome</button>
+        </div>
         <div id="questionResult" class="result"></div>
     </div>
 
@@ -240,10 +276,26 @@
     };
 
     const questions = [
-        { question: "What is the powerhouse of the cell?", answer: "mitochondria" },
-        { question: "What molecule carries genetic information?", answer: "DNA" },
-        { question: "What organelle is responsible for protein synthesis?", answer: "ribosome" },
-        { question: "What type of cell division results in two identical cells?", answer: "mitosis" }
+        {
+            question: "What is the powerhouse of the cell?",
+            options: ["Mitochondria", "Nucleus", "Chloroplast", "Ribosome"],
+            answer: "mitochondria"
+        },
+        {
+            question: "What molecule carries genetic information?",
+            options: ["DNA", "RNA", "Protein", "Lipids"],
+            answer: "DNA"
+        },
+        {
+            question: "What organelle is responsible for protein synthesis?",
+            options: ["Ribosome", "Golgi Apparatus", "Mitochondria", "Endoplasmic Reticulum"],
+            answer: "ribosome"
+        },
+        {
+            question: "What type of cell division results in two identical cells?",
+            options: ["Mitosis", "Meiosis", "Binary Fission", "Germination"],
+            answer: "mitosis"
+        }
     ];
 
     function showScreen(screenId) {
@@ -266,28 +318,37 @@
     function updateEnergyBar() {
         document.getElementById("energyFill").style.width = `${energy}%`;
         document.getElementById("energyText").innerText = `${energy}/100`;
-        if (energy <= 0) {
-            performMonsterAttack();
-        }
     }
 
     function updateVirusHealthBar() {
         document.getElementById("virusHealthFill").style.width = `${monsterHealth}%`;
         document.getElementById("virusHealthText").innerText = `${monsterHealth}/100`;
-        if (monsterHealth <= 0) {
-            alert("You defeated the monster!");
-            startNewRoom();
-        }
+    }
+
+    function startGame() {
+        showScreen("questionScreen");
+        askQuestion();
     }
 
     function askQuestion() {
         let question = questions[questionsAnswered];
         document.getElementById("questionText").innerText = question.question;
+        const options = question.options;
+
+        const optionsContainer = document.getElementById('optionsContainer');
+        optionsContainer.innerHTML = '';
+        options.forEach(option => {
+            const optionButton = document.createElement('button');
+            optionButton.className = 'option-button';
+            optionButton.innerText = option;
+            optionButton.onclick = () => checkAnswer(option.toLowerCase());
+            optionsContainer.appendChild(optionButton);
+        });
+
         showScreen("questionScreen");
     }
 
-    function checkAnswer() {
-        const userAnswer = document.getElementById("answerInput").value.trim().toLowerCase();
+    function checkAnswer(userAnswer) {
         const correctAnswer = questions[questionsAnswered].answer;
         const resultDiv = document.getElementById("questionResult");
 
@@ -301,11 +362,12 @@
         }
 
         questionsAnswered++;
+        resultDiv.style.display = 'block';
+
         if (questionsAnswered < questions.length) {
             setTimeout(() => {
                 resultDiv.style.display = 'none';
-                document.getElementById("answerInput").value = '';
-                showScreen("actionScreen");
+                askQuestion();
                 updateEnergyBar();
             }, 2000);
         } else {
@@ -342,12 +404,7 @@
         }, 2000);
     }
 
-    function startGame() {
-        showScreen("actionScreen");
-        askQuestion();
-    }
-
-    function startNewRoom() {
+    function resetGame() {
         questionsAnswered = 0;
         energy = 0;
         health = 100;
@@ -357,10 +414,6 @@
         updateEnergyBar();
         askQuestion();
     }
-
-    // Initialize game
-    startGame();
 </script>
-
 </body>
 </html>
